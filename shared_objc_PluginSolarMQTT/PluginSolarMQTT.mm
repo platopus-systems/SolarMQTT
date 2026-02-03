@@ -318,14 +318,34 @@ PluginSolarMQTT::connect_broker( lua_State *L )
 		// That sets mosq->threaded = mosq_ts_external, but loop_start()
 		// requires mosq_ts_none so it can manage its own thread.
 
-		// Connect asynchronously
-		int rc = mosquitto_connect_async(mosq_client,
+		// Start the network loop thread BEFORE connect_async.
+		// connect_async needs the loop running to handle the TCP connection.
+		int rc = mosquitto_loop_start(mosq_client);
+		if (rc != MOSQ_ERR_SUCCESS) {
+			NSLog(@"SolarMQTT: loop_start failed: %s", mosquitto_strerror(rc));
+			dispatch_async(dispatch_get_main_queue(), ^{
+				if (!mosq_L_valid || mosq_L_generation != connectGeneration) return;
+				CoronaLuaNewEvent(mosq_L, PluginSolarMQTT::kEvent);
+				lua_pushstring(mosq_L, "error");
+				lua_setfield(mosq_L, -2, "name");
+				lua_pushstring(mosq_L, "loop_start failed");
+				lua_setfield(mosq_L, -2, "errorMessage");
+				CoronaLuaDispatchEvent(mosq_L, mosq_fListener, 0);
+			});
+			mosquitto_destroy(mosq_client);
+			mosq_client = NULL;
+			return;
+		}
+
+		// Now connect asynchronously — the loop thread handles the TCP connection
+		rc = mosquitto_connect_async(mosq_client,
 			[brokerStr UTF8String],
 			port,
 			keepAlive);
 
 		if (rc != MOSQ_ERR_SUCCESS) {
 			NSLog(@"SolarMQTT: Connect failed: %s", mosquitto_strerror(rc));
+			mosquitto_loop_stop(mosq_client, true);
 			dispatch_async(dispatch_get_main_queue(), ^{
 				if (!mosq_L_valid || mosq_L_generation != connectGeneration) return;
 				CoronaLuaNewEvent(mosq_L, PluginSolarMQTT::kEvent);
@@ -338,14 +358,6 @@ PluginSolarMQTT::connect_broker( lua_State *L )
 			mosquitto_destroy(mosq_client);
 			mosq_client = NULL;
 			return;
-		}
-
-		// Start the network loop thread
-		rc = mosquitto_loop_start(mosq_client);
-		if (rc != MOSQ_ERR_SUCCESS) {
-			NSLog(@"SolarMQTT: loop_start failed: %s", mosquitto_strerror(rc));
-			mosquitto_destroy(mosq_client);
-			mosq_client = NULL;
 		}
 
 		NSLog(@"SolarMQTT: Connecting to %@:%d", brokerStr, port);
