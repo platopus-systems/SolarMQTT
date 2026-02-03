@@ -1,0 +1,308 @@
+name: Build SolarMQTT Plugin
+
+on:
+  push:
+    tags: ['v*']
+
+env:
+  SOLAR2D_VERSION: "3727"
+  SOLAR2D_DMG_URL: "https://github.com/coronalabs/corona/releases/download/3727/Solar2D-macOS-2026.3727.dmg"
+
+jobs:
+  build-macos:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Cache Corona Native SDK
+        id: cache-corona
+        uses: actions/cache@v4
+        with:
+          path: ~/corona-native
+          key: corona-native-${{ env.SOLAR2D_VERSION }}
+
+      - name: Download Corona Native SDK
+        if: steps.cache-corona.outputs.cache-hit != 'true'
+        run: |
+          curl -L -o /tmp/Solar2D.dmg "$SOLAR2D_DMG_URL"
+          hdiutil attach /tmp/Solar2D.dmg -mountpoint /tmp/solar2d-mount -nobrowse
+          NATIVE_SRC=$(find /tmp/solar2d-mount -path "*/Native" -type d -maxdepth 3 | head -1)
+          if [ -z "$NATIVE_SRC" ]; then
+            echo "ERROR: Could not find Native directory in DMG"
+            exit 1
+          fi
+          mkdir -p ~/corona-native
+          cp -R "$NATIVE_SRC"/* ~/corona-native/
+          hdiutil detach /tmp/solar2d-mount
+          rm /tmp/Solar2D.dmg
+
+      - name: Install Corona Native SDK
+        run: |
+          mkdir -p "$HOME/Library/Application Support/Corona"
+          ln -s ~/corona-native "$HOME/Library/Application Support/Corona/Native"
+
+      - name: Build macOS plugin
+        run: |
+          xcodebuild -project mac/Plugin.xcodeproj \
+            -configuration Release \
+            MACOSX_DEPLOYMENT_TARGET=10.13 \
+            CONFIGURATION_BUILD_DIR="$(pwd)/mac/build/Release"
+
+      - name: Codesign dylib
+        run: codesign -s - -f mac/build/Release/plugin_solarmqtt.dylib
+
+      - name: Upload macOS artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: macos-plugin
+          path: mac/build/Release/plugin_solarmqtt.dylib
+
+  build-ios:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Cache Corona Native SDK
+        id: cache-corona
+        uses: actions/cache@v4
+        with:
+          path: ~/corona-native
+          key: corona-native-${{ env.SOLAR2D_VERSION }}
+
+      - name: Download Corona Native SDK
+        if: steps.cache-corona.outputs.cache-hit != 'true'
+        run: |
+          curl -L -o /tmp/Solar2D.dmg "$SOLAR2D_DMG_URL"
+          hdiutil attach /tmp/Solar2D.dmg -mountpoint /tmp/solar2d-mount -nobrowse
+          NATIVE_SRC=$(find /tmp/solar2d-mount -path "*/Native" -type d -maxdepth 3 | head -1)
+          if [ -z "$NATIVE_SRC" ]; then
+            echo "ERROR: Could not find Native directory in DMG"
+            exit 1
+          fi
+          mkdir -p ~/corona-native
+          cp -R "$NATIVE_SRC"/* ~/corona-native/
+          hdiutil detach /tmp/solar2d-mount
+          rm /tmp/Solar2D.dmg
+
+      - name: Install Corona Native SDK
+        run: |
+          mkdir -p "$HOME/Library/Application Support/Corona"
+          ln -s ~/corona-native "$HOME/Library/Application Support/Corona/Native"
+
+      - name: Build iOS device
+        run: |
+          xcodebuild -project ios/Plugin.xcodeproj \
+            -configuration Release \
+            -sdk iphoneos \
+            IPHONEOS_DEPLOYMENT_TARGET=12.0 \
+            CONFIGURATION_BUILD_DIR="$(pwd)/ios/build/Release-iphoneos"
+
+      - name: Build iOS simulator
+        run: |
+          xcodebuild -project ios/Plugin.xcodeproj \
+            -configuration Release \
+            -sdk iphonesimulator \
+            IPHONEOS_DEPLOYMENT_TARGET=12.0 \
+            CONFIGURATION_BUILD_DIR="$(pwd)/ios/build/Release-iphonesimulator"
+
+      - name: Prepare iOS artifacts
+        run: |
+          mkdir -p ios/output-device ios/output-sim
+          cp ios/build/Release-iphoneos/libplugin_solarmqtt.a ios/output-device/libplugin_library.a
+          cp ios/metadata.lua ios/output-device/
+          cp ios/build/Release-iphonesimulator/libplugin_solarmqtt.a ios/output-sim/libplugin_library.a
+          cp ios/metadata.lua ios/output-sim/
+
+      - name: Upload iOS device artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios-device-plugin
+          path: ios/output-device/
+
+      - name: Upload iOS simulator artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios-sim-plugin
+          path: ios/output-sim/
+
+  build-tvos:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Cache Corona Native SDK
+        id: cache-corona
+        uses: actions/cache@v4
+        with:
+          path: ~/corona-native
+          key: corona-native-${{ env.SOLAR2D_VERSION }}
+
+      - name: Download Corona Native SDK
+        if: steps.cache-corona.outputs.cache-hit != 'true'
+        run: |
+          curl -L -o /tmp/Solar2D.dmg "$SOLAR2D_DMG_URL"
+          hdiutil attach /tmp/Solar2D.dmg -mountpoint /tmp/solar2d-mount -nobrowse
+          NATIVE_SRC=$(find /tmp/solar2d-mount -path "*/Native" -type d -maxdepth 3 | head -1)
+          if [ -z "$NATIVE_SRC" ]; then
+            echo "ERROR: Could not find Native directory in DMG"
+            exit 1
+          fi
+          mkdir -p ~/corona-native
+          cp -R "$NATIVE_SRC"/* ~/corona-native/
+          hdiutil detach /tmp/solar2d-mount
+          rm /tmp/Solar2D.dmg
+
+      - name: Install Corona Native SDK
+        run: |
+          mkdir -p "$HOME/Library/Application Support/Corona"
+          ln -s ~/corona-native "$HOME/Library/Application Support/Corona/Native"
+
+      - name: Build tvOS plugin
+        run: |
+          xcodebuild -project tvos/Plugin.xcodeproj \
+            -target "Corona_plugin_solarmqtt" \
+            -configuration Release \
+            -sdk appletvos \
+            TVOS_DEPLOYMENT_TARGET=12.0 || true
+
+      - name: Create tvOS static library from compiled objects
+        run: |
+          OBJ_DIR="tvos/build/Plugin.build/Release-appletvos/Corona_plugin_solarmqtt.build/Objects-normal/arm64"
+          if ! ls "$OBJ_DIR"/*.o >/dev/null 2>&1; then
+            echo "ERROR: No object files found at $OBJ_DIR"
+            exit 1
+          fi
+          mkdir -p tvos/output
+          ar rcs tvos/output/libplugin_library.a "$OBJ_DIR"/*.o
+          cp tvos/metadata.lua tvos/output/
+          echo "Created static library:"
+          file tvos/output/libplugin_library.a
+          ar t tvos/output/libplugin_library.a
+
+      - name: Upload tvOS artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: tvos-plugin
+          path: tvos/output/
+
+  build-android:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Set up Java 11
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '11'
+
+      - name: Cache Corona Native SDK
+        id: cache-corona
+        uses: actions/cache@v4
+        with:
+          path: ~/corona-native
+          key: corona-native-${{ env.SOLAR2D_VERSION }}
+
+      - name: Download Corona Native SDK
+        if: steps.cache-corona.outputs.cache-hit != 'true'
+        run: |
+          curl -L -o /tmp/Solar2D.dmg "$SOLAR2D_DMG_URL"
+          hdiutil attach /tmp/Solar2D.dmg -mountpoint /tmp/solar2d-mount -nobrowse
+          NATIVE_SRC=$(find /tmp/solar2d-mount -path "*/Native" -type d -maxdepth 3 | head -1)
+          if [ -z "$NATIVE_SRC" ]; then
+            echo "ERROR: Could not find Native directory in DMG"
+            exit 1
+          fi
+          mkdir -p ~/corona-native
+          cp -R "$NATIVE_SRC"/* ~/corona-native/
+          hdiutil detach /tmp/solar2d-mount
+          rm /tmp/Solar2D.dmg
+
+      - name: Install Corona Native SDK
+        run: |
+          mkdir -p "$HOME/Library/Application Support/Corona"
+          ln -s ~/corona-native "$HOME/Library/Application Support/Corona/Native"
+
+      - name: Build Android plugin
+        run: |
+          cd android
+          echo 'rootProject.name = "Corona Native Android"' > settings-ci.gradle
+          echo 'include("plugin")' >> settings-ci.gradle
+          chmod +x gradlew
+          ./gradlew -c settings-ci.gradle :plugin:exportPluginJar
+
+      - name: Prepare Android artifact
+        run: |
+          mkdir -p android/output
+          cp android/plugin/build/outputs/jar/plugin.solarmqtt.jar android/output/
+          cp android/metadata.lua android/output/
+
+      - name: Upload Android artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-plugin
+          path: android/output/
+
+  release:
+    needs: [build-macos, build-ios, build-tvos, build-android]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts/
+
+      - name: List downloaded artifacts
+        run: find artifacts/ -type f
+
+      - name: Package platform .tgz files
+        run: |
+          mkdir -p release
+
+          # Android .tgz
+          tar -czf release/solarmqtt_android.tgz -C artifacts/android-plugin .
+
+          # iOS device .tgz
+          tar -czf release/solarmqtt_iphone.tgz -C artifacts/ios-device-plugin .
+
+          # iOS simulator .tgz
+          tar -czf release/solarmqtt_iphone-sim.tgz -C artifacts/ios-sim-plugin .
+
+          # tvOS .tgz
+          tar -czf release/solarmqtt_appletvos.tgz -C artifacts/tvos-plugin .
+
+          # macOS simulator .tgz
+          tar -czf release/solarmqtt_mac-sim.tgz -C artifacts/macos-plugin .
+
+          # Also copy raw binaries for direct download
+          cp artifacts/macos-plugin/plugin_solarmqtt.dylib release/
+          cp artifacts/android-plugin/plugin.solarmqtt.jar release/
+
+      - name: Delete existing release (if re-tagging)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release delete "${{ github.ref_name }}" --repo "${{ github.repository }}" --yes || true
+
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "${{ github.ref_name }}" \
+            --repo "${{ github.repository }}" \
+            --title "SolarMQTT ${{ github.ref_name }}" \
+            --generate-notes \
+            release/*

@@ -1,0 +1,20 @@
+settings =
+{
+    plugins = {
+        ["plugin.solarmqtt"] =
+        {
+            publisherId = "com.platopus",
+        },
+    },
+
+    iphone =
+    {
+        plist =
+        {
+            NSAppTransportSecurity =
+            {
+                NSAllowsArbitraryLoads = true,
+            },
+        },
+    },
+}

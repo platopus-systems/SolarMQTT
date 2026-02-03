@@ -1,0 +1,562 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		052F95D70FF2B30C9FC8B834 /* options.c in Sources */ = {isa = PBXBuildFile; fileRef = 6693BD5A302132A0A2507763 /* options.c */; };
+		0882E393CF60EEAFAF1FBD02 /* handle_ping.c in Sources */ = {isa = PBXBuildFile; fileRef = 3A098999CA3FD2FF851B7B7B /* handle_ping.c */; };
+		10AA93EDC9AFB57F2D5835A7 /* handle_auth.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F80A30218E6191B27B868B4 /* handle_auth.c */; };
+		1E0F47F2B769BF8875DE9572 /* memory_common.c in Sources */ = {isa = PBXBuildFile; fileRef = FEB4E1B750642E2972FF77D8 /* memory_common.c */; };
+		1FB133510322476E93162C2A /* send_publish.c in Sources */ = {isa = PBXBuildFile; fileRef = 56A6988D6892BDB81683B141 /* send_publish.c */; };
+		2C2450D5DD5A62FA9359EE4F /* handle_suback.c in Sources */ = {isa = PBXBuildFile; fileRef = F38573010E5367A3FA109F2B /* handle_suback.c */; };
+		2F67F279F49F4F74806A10C2 /* random_common.c in Sources */ = {isa = PBXBuildFile; fileRef = 0A114BDB82C4CB8CC897B2A3 /* random_common.c */; };
+		33F4E0D8EFED44408F647494 /* helpers.c in Sources */ = {isa = PBXBuildFile; fileRef = 937326BB9957E72B75476C01 /* helpers.c */; };
+		3C2FA51CF93C9BC20C8A48BD /* send_unsubscribe.c in Sources */ = {isa = PBXBuildFile; fileRef = BCBD46F73FBD37E9F3E61256 /* send_unsubscribe.c */; };
+		43B47207CEAC67D4B22B282E /* libmosquitto.c in Sources */ = {isa = PBXBuildFile; fileRef = DF8B04A6BE94315112F5F37F /* libmosquitto.c */; };
+		4A28C132708036E22681948E /* utf8_common.c in Sources */ = {isa = PBXBuildFile; fileRef = 46276F431B775D13630B5261 /* utf8_common.c */; };
+		4F672C3C773810715EF0887E /* packet_datatypes.c in Sources */ = {isa = PBXBuildFile; fileRef = 6E54CBF3B1B4FBB2650C03ED /* packet_datatypes.c */; };
+		506ADB4A569CF3DB1CBAFDEF /* thread_mosq.c in Sources */ = {isa = PBXBuildFile; fileRef = 6BFDABA724233AC2173B0B55 /* thread_mosq.c */; };
+		50E909DABE0504DF6E9E15A4 /* messages_mosq.c in Sources */ = {isa = PBXBuildFile; fileRef = 0C1E00488FF17965914BAEBD /* messages_mosq.c */; };
+		562F309DEC789E5E935A4963 /* strings_common.c in Sources */ = {isa = PBXBuildFile; fileRef = 76FF1D670DE0A0A3AA1AF3E6 /* strings_common.c */; };
+		5942ECC93C736FED43573696 /* connect.c in Sources */ = {isa = PBXBuildFile; fileRef = DD80086E07EED182E76333A3 /* connect.c */; };
+		660410568AB0D582E2606F34 /* alias_mosq.c in Sources */ = {isa = PBXBuildFile; fileRef = 918D44C2FCD93F43FDA8E50C /* alias_mosq.c */; };
+		6992E4C820F02CE513AB1B14 /* topic_common.c in Sources */ = {isa = PBXBuildFile; fileRef = 49EBCC8CBC11638E7E1EA033 /* topic_common.c */; };
+		69F7BF56B7D2C3F16850199F /* handle_pubackcomp.c in Sources */ = {isa = PBXBuildFile; fileRef = B775B27635F26426A4E597DA /* handle_pubackcomp.c */; };
+		6BE3B03BF9FC74ABC189B691 /* actions_subscribe.c in Sources */ = {isa = PBXBuildFile; fileRef = 08F1FB5A9B6FEAB2349C63F7 /* actions_subscribe.c */; };
+		6EDD0A7280235730729BBD1B /* send_mosq.c in Sources */ = {isa = PBXBuildFile; fileRef = 9A28175AA5657E9BB663A0C6 /* send_mosq.c */; };
+		6FAC9B9075A200DF835B84F0 /* actions_publish.c in Sources */ = {isa = PBXBuildFile; fileRef = C4B7D8382512AA21CF5EA22C /* actions_publish.c */; };
+		74A0CA96CBF040B880660132 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 92F9E8B8E1C5A089E653E1D6 /* Foundation.framework */; };
+		7591AEC8E3B32DDF3A82C4E3 /* property_mosq.c in Sources */ = {isa = PBXBuildFile; fileRef = 9EDE62960529C129768326BE /* property_mosq.c */; };
+		7B4A681B8DE06254D79CDE5C /* time_common.c in Sources */ = {isa = PBXBuildFile; fileRef = E5FC9EBF93E03563D1F05A75 /* time_common.c */; };
+		7F042697EEDCFA4AFA94BC99 /* send_connect.c in Sources */ = {isa = PBXBuildFile; fileRef = 180898F5D32438A20D7D16F4 /* send_connect.c */; };
+		820FADD3C2B5C53E81BCD07B /* actions_unsubscribe.c in Sources */ = {isa = PBXBuildFile; fileRef = 05C8788487CC757352AD2013 /* actions_unsubscribe.c */; };
+		8C44DB2818D3968DA0FFFBCC /* handle_disconnect.c in Sources */ = {isa = PBXBuildFile; fileRef = 153C92A24DCAEC41E2B47BDE /* handle_disconnect.c */; };
+		8E5541D745FD58A539FD960B /* property_common.c in Sources */ = {isa = PBXBuildFile; fileRef = A969F16EDA8A9864476DD65A /* property_common.c */; };
+		8E5C97AA21917090B244EA7D /* read_handle.c in Sources */ = {isa = PBXBuildFile; fileRef = 79089BEA7509237D3CBCD645 /* read_handle.c */; };
+		96E80835EF7BC9A2BDC38CD0 /* send_subscribe.c in Sources */ = {isa = PBXBuildFile; fileRef = 673D6931F484FF382197CAD2 /* send_subscribe.c */; };
+		9BBFE697DEC740206D4D8794 /* handle_unsuback.c in Sources */ = {isa = PBXBuildFile; fileRef = D49610AA6788952D83BEE0CF /* handle_unsuback.c */; };
+		A8F4B8F98131D4597D13CC4E /* util_mosq.c in Sources */ = {isa = PBXBuildFile; fileRef = C6520E33B8F986C931283072 /* util_mosq.c */; };
+		B3A8228C8F117851C2304011 /* handle_publish.c in Sources */ = {isa = PBXBuildFile; fileRef = 6C4D90251155EADCED547C44 /* handle_publish.c */; };
+		B3A96CC0205CC7E729BE762E /* send_disconnect.c in Sources */ = {isa = PBXBuildFile; fileRef = 6A22BED34A357BE649BC252C /* send_disconnect.c */; };
+		B4097EDF8BC53A07160B316F /* will_mosq.c in Sources */ = {isa = PBXBuildFile; fileRef = F0BB361D253E8D80904F6B96 /* will_mosq.c */; };
+		B6F9835195838ED45F0020A8 /* net_mosq.c in Sources */ = {isa = PBXBuildFile; fileRef = 036F148916E089281063E360 /* net_mosq.c */; };
+		B97AFA9CA91FA7C9C3D131AF /* PluginSolarMQTT.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9C30CB0353AB6D77CBCBB14D /* PluginSolarMQTT.mm */; };
+		C2AE712F8039E565717A8026 /* packet_mosq.c in Sources */ = {isa = PBXBuildFile; fileRef = C9AE62AB36429222AF513755 /* packet_mosq.c */; };
+		CBFD1240038E2646AF6127FE /* callbacks.c in Sources */ = {isa = PBXBuildFile; fileRef = 78715EF323AFD5221A86B034 /* callbacks.c */; };
+		DE50BAF0498FC3F2558E95C2 /* handle_connack.c in Sources */ = {isa = PBXBuildFile; fileRef = 98E128FF6E595687780C748B /* handle_connack.c */; };
+		F59A615AE85BEA216E323685 /* handle_pubrel.c in Sources */ = {isa = PBXBuildFile; fileRef = 97DEA0DC0D93C5D9ADE979F7 /* handle_pubrel.c */; };
+		F69F3BE6F2135151846AEA7E /* logging_mosq.c in Sources */ = {isa = PBXBuildFile; fileRef = 1EDBD935B3600D69F4DCD67F /* logging_mosq.c */; };
+		F9838C8A8BE3596ED3E1C5CC /* handle_pubrec.c in Sources */ = {isa = PBXBuildFile; fileRef = AC73AC3E50066A8E79A28C85 /* handle_pubrec.c */; };
+		FD317D418907DB252CD62D15 /* loop.c in Sources */ = {isa = PBXBuildFile; fileRef = CE17D8B47FCA8BBC4C27232F /* loop.c */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		036F148916E089281063E360 /* net_mosq.c */ = {isa = PBXFileReference; includeInIndex = 1; path = net_mosq.c; sourceTree = "<group>"; };
+		05C8788487CC757352AD2013 /* actions_unsubscribe.c */ = {isa = PBXFileReference; includeInIndex = 1; path = actions_unsubscribe.c; sourceTree = "<group>"; };
+		08F1FB5A9B6FEAB2349C63F7 /* actions_subscribe.c */ = {isa = PBXFileReference; includeInIndex = 1; path = actions_subscribe.c; sourceTree = "<group>"; };
+		0A114BDB82C4CB8CC897B2A3 /* random_common.c */ = {isa = PBXFileReference; includeInIndex = 1; path = random_common.c; sourceTree = "<group>"; };
+		0C1E00488FF17965914BAEBD /* messages_mosq.c */ = {isa = PBXFileReference; includeInIndex = 1; path = messages_mosq.c; sourceTree = "<group>"; };
+		1097C1F8B04B2DD097BA0445 /* Corona_plugin_solarmqtt.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Corona_plugin_solarmqtt.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		153C92A24DCAEC41E2B47BDE /* handle_disconnect.c */ = {isa = PBXFileReference; includeInIndex = 1; path = handle_disconnect.c; sourceTree = "<group>"; };
+		180898F5D32438A20D7D16F4 /* send_connect.c */ = {isa = PBXFileReference; includeInIndex = 1; path = send_connect.c; sourceTree = "<group>"; };
+		1EDBD935B3600D69F4DCD67F /* logging_mosq.c */ = {isa = PBXFileReference; includeInIndex = 1; path = logging_mosq.c; sourceTree = "<group>"; };
+		3A098999CA3FD2FF851B7B7B /* handle_ping.c */ = {isa = PBXFileReference; includeInIndex = 1; path = handle_ping.c; sourceTree = "<group>"; };
+		46276F431B775D13630B5261 /* utf8_common.c */ = {isa = PBXFileReference; includeInIndex = 1; path = utf8_common.c; sourceTree = "<group>"; };
+		49EBCC8CBC11638E7E1EA033 /* topic_common.c */ = {isa = PBXFileReference; includeInIndex = 1; path = topic_common.c; sourceTree = "<group>"; };
+		56A6988D6892BDB81683B141 /* send_publish.c */ = {isa = PBXFileReference; includeInIndex = 1; path = send_publish.c; sourceTree = "<group>"; };
+		6693BD5A302132A0A2507763 /* options.c */ = {isa = PBXFileReference; includeInIndex = 1; path = options.c; sourceTree = "<group>"; };
+		673D6931F484FF382197CAD2 /* send_subscribe.c */ = {isa = PBXFileReference; includeInIndex = 1; path = send_subscribe.c; sourceTree = "<group>"; };
+		6A22BED34A357BE649BC252C /* send_disconnect.c */ = {isa = PBXFileReference; includeInIndex = 1; path = send_disconnect.c; sourceTree = "<group>"; };
+		6BFDABA724233AC2173B0B55 /* thread_mosq.c */ = {isa = PBXFileReference; includeInIndex = 1; path = thread_mosq.c; sourceTree = "<group>"; };
+		6C4D90251155EADCED547C44 /* handle_publish.c */ = {isa = PBXFileReference; includeInIndex = 1; path = handle_publish.c; sourceTree = "<group>"; };
+		6E54CBF3B1B4FBB2650C03ED /* packet_datatypes.c */ = {isa = PBXFileReference; includeInIndex = 1; path = packet_datatypes.c; sourceTree = "<group>"; };
+		76FF1D670DE0A0A3AA1AF3E6 /* strings_common.c */ = {isa = PBXFileReference; includeInIndex = 1; path = strings_common.c; sourceTree = "<group>"; };
+		78715EF323AFD5221A86B034 /* callbacks.c */ = {isa = PBXFileReference; includeInIndex = 1; path = callbacks.c; sourceTree = "<group>"; };
+		79089BEA7509237D3CBCD645 /* read_handle.c */ = {isa = PBXFileReference; includeInIndex = 1; path = read_handle.c; sourceTree = "<group>"; };
+		918D44C2FCD93F43FDA8E50C /* alias_mosq.c */ = {isa = PBXFileReference; includeInIndex = 1; path = alias_mosq.c; sourceTree = "<group>"; };
+		92F9E8B8E1C5A089E653E1D6 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS18.0.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
+		937326BB9957E72B75476C01 /* helpers.c */ = {isa = PBXFileReference; includeInIndex = 1; path = helpers.c; sourceTree = "<group>"; };
+		97DEA0DC0D93C5D9ADE979F7 /* handle_pubrel.c */ = {isa = PBXFileReference; includeInIndex = 1; path = handle_pubrel.c; sourceTree = "<group>"; };
+		98E128FF6E595687780C748B /* handle_connack.c */ = {isa = PBXFileReference; includeInIndex = 1; path = handle_connack.c; sourceTree = "<group>"; };
+		9A28175AA5657E9BB663A0C6 /* send_mosq.c */ = {isa = PBXFileReference; includeInIndex = 1; path = send_mosq.c; sourceTree = "<group>"; };
+		9C30CB0353AB6D77CBCBB14D /* PluginSolarMQTT.mm */ = {isa = PBXFileReference; includeInIndex = 1; path = PluginSolarMQTT.mm; sourceTree = "<group>"; };
+		9EDE62960529C129768326BE /* property_mosq.c */ = {isa = PBXFileReference; includeInIndex = 1; path = property_mosq.c; sourceTree = "<group>"; };
+		9F80A30218E6191B27B868B4 /* handle_auth.c */ = {isa = PBXFileReference; includeInIndex = 1; path = handle_auth.c; sourceTree = "<group>"; };
+		A969F16EDA8A9864476DD65A /* property_common.c */ = {isa = PBXFileReference; includeInIndex = 1; path = property_common.c; sourceTree = "<group>"; };
+		AC73AC3E50066A8E79A28C85 /* handle_pubrec.c */ = {isa = PBXFileReference; includeInIndex = 1; path = handle_pubrec.c; sourceTree = "<group>"; };
+		B775B27635F26426A4E597DA /* handle_pubackcomp.c */ = {isa = PBXFileReference; includeInIndex = 1; path = handle_pubackcomp.c; sourceTree = "<group>"; };
+		BCBD46F73FBD37E9F3E61256 /* send_unsubscribe.c */ = {isa = PBXFileReference; includeInIndex = 1; path = send_unsubscribe.c; sourceTree = "<group>"; };
+		C4B7D8382512AA21CF5EA22C /* actions_publish.c */ = {isa = PBXFileReference; includeInIndex = 1; path = actions_publish.c; sourceTree = "<group>"; };
+		C6520E33B8F986C931283072 /* util_mosq.c */ = {isa = PBXFileReference; includeInIndex = 1; path = util_mosq.c; sourceTree = "<group>"; };
+		C9AE62AB36429222AF513755 /* packet_mosq.c */ = {isa = PBXFileReference; includeInIndex = 1; path = packet_mosq.c; sourceTree = "<group>"; };
+		CE17D8B47FCA8BBC4C27232F /* loop.c */ = {isa = PBXFileReference; includeInIndex = 1; path = loop.c; sourceTree = "<group>"; };
+		D49610AA6788952D83BEE0CF /* handle_unsuback.c */ = {isa = PBXFileReference; includeInIndex = 1; path = handle_unsuback.c; sourceTree = "<group>"; };
+		DD80086E07EED182E76333A3 /* connect.c */ = {isa = PBXFileReference; includeInIndex = 1; path = connect.c; sourceTree = "<group>"; };
+		DF8B04A6BE94315112F5F37F /* libmosquitto.c */ = {isa = PBXFileReference; includeInIndex = 1; path = libmosquitto.c; sourceTree = "<group>"; };
+		E5FC9EBF93E03563D1F05A75 /* time_common.c */ = {isa = PBXFileReference; includeInIndex = 1; path = time_common.c; sourceTree = "<group>"; };
+		F0BB361D253E8D80904F6B96 /* will_mosq.c */ = {isa = PBXFileReference; includeInIndex = 1; path = will_mosq.c; sourceTree = "<group>"; };
+		F38573010E5367A3FA109F2B /* handle_suback.c */ = {isa = PBXFileReference; includeInIndex = 1; path = handle_suback.c; sourceTree = "<group>"; };
+		FEB4E1B750642E2972FF77D8 /* memory_common.c */ = {isa = PBXFileReference; includeInIndex = 1; path = memory_common.c; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		FFDC8B5B9E879E4E9FCC6E43 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				74A0CA96CBF040B880660132 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		0A1905517615B85E4EFBFB88 /* libcommon */ = {
+			isa = PBXGroup;
+			children = (
+				46276F431B775D13630B5261 /* utf8_common.c */,
+				49EBCC8CBC11638E7E1EA033 /* topic_common.c */,
+				FEB4E1B750642E2972FF77D8 /* memory_common.c */,
+				A969F16EDA8A9864476DD65A /* property_common.c */,
+				0A114BDB82C4CB8CC897B2A3 /* random_common.c */,
+				76FF1D670DE0A0A3AA1AF3E6 /* strings_common.c */,
+				E5FC9EBF93E03563D1F05A75 /* time_common.c */,
+			);
+			name = libcommon;
+			path = ../shared_mosquitto/libcommon;
+			sourceTree = "<group>";
+		};
+		25A90B6C6A51C6A60F918200 /* shared_mosquitto */ = {
+			isa = PBXGroup;
+			children = (
+				DF8B04A6BE94315112F5F37F /* libmosquitto.c */,
+				036F148916E089281063E360 /* net_mosq.c */,
+				B775B27635F26426A4E597DA /* handle_pubackcomp.c */,
+				08F1FB5A9B6FEAB2349C63F7 /* actions_subscribe.c */,
+				CE17D8B47FCA8BBC4C27232F /* loop.c */,
+				F38573010E5367A3FA109F2B /* handle_suback.c */,
+				3A098999CA3FD2FF851B7B7B /* handle_ping.c */,
+				97DEA0DC0D93C5D9ADE979F7 /* handle_pubrel.c */,
+				0C1E00488FF17965914BAEBD /* messages_mosq.c */,
+				C9AE62AB36429222AF513755 /* packet_mosq.c */,
+				180898F5D32438A20D7D16F4 /* send_connect.c */,
+				79089BEA7509237D3CBCD645 /* read_handle.c */,
+				F0BB361D253E8D80904F6B96 /* will_mosq.c */,
+				9F80A30218E6191B27B868B4 /* handle_auth.c */,
+				D49610AA6788952D83BEE0CF /* handle_unsuback.c */,
+				937326BB9957E72B75476C01 /* helpers.c */,
+				98E128FF6E595687780C748B /* handle_connack.c */,
+				6BFDABA724233AC2173B0B55 /* thread_mosq.c */,
+				C6520E33B8F986C931283072 /* util_mosq.c */,
+				56A6988D6892BDB81683B141 /* send_publish.c */,
+				153C92A24DCAEC41E2B47BDE /* handle_disconnect.c */,
+				1EDBD935B3600D69F4DCD67F /* logging_mosq.c */,
+				9A28175AA5657E9BB663A0C6 /* send_mosq.c */,
+				BCBD46F73FBD37E9F3E61256 /* send_unsubscribe.c */,
+				C4B7D8382512AA21CF5EA22C /* actions_publish.c */,
+				6C4D90251155EADCED547C44 /* handle_publish.c */,
+				DD80086E07EED182E76333A3 /* connect.c */,
+				918D44C2FCD93F43FDA8E50C /* alias_mosq.c */,
+				78715EF323AFD5221A86B034 /* callbacks.c */,
+				AC73AC3E50066A8E79A28C85 /* handle_pubrec.c */,
+				673D6931F484FF382197CAD2 /* send_subscribe.c */,
+				6E54CBF3B1B4FBB2650C03ED /* packet_datatypes.c */,
+				6A22BED34A357BE649BC252C /* send_disconnect.c */,
+				05C8788487CC757352AD2013 /* actions_unsubscribe.c */,
+				6693BD5A302132A0A2507763 /* options.c */,
+				9EDE62960529C129768326BE /* property_mosq.c */,
+			);
+			name = shared_mosquitto;
+			path = ../shared_mosquitto;
+			sourceTree = "<group>";
+		};
+		367CDC9AECC0488E98E6BE8C /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				1097C1F8B04B2DD097BA0445 /* Corona_plugin_solarmqtt.framework */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		3F1AC25EAF515AE1D1FB2DB9 /* tvOS */ = {
+			isa = PBXGroup;
+			children = (
+				92F9E8B8E1C5A089E653E1D6 /* Foundation.framework */,
+			);
+			name = tvOS;
+			sourceTree = "<group>";
+		};
+		60CE2F4712DE89811F284F79 /* shared_objc_PluginSolarMQTT */ = {
+			isa = PBXGroup;
+			children = (
+				9C30CB0353AB6D77CBCBB14D /* PluginSolarMQTT.mm */,
+			);
+			name = shared_objc_PluginSolarMQTT;
+			path = ../shared_objc_PluginSolarMQTT;
+			sourceTree = "<group>";
+		};
+		BD62CD88930BA4A1EBE2E5F2 = {
+			isa = PBXGroup;
+			children = (
+				367CDC9AECC0488E98E6BE8C /* Products */,
+				EE67E631DC8712DC4F87B0CB /* Frameworks */,
+				25A90B6C6A51C6A60F918200 /* shared_mosquitto */,
+				60CE2F4712DE89811F284F79 /* shared_objc_PluginSolarMQTT */,
+				0A1905517615B85E4EFBFB88 /* libcommon */,
+			);
+			sourceTree = "<group>";
+		};
+		EE67E631DC8712DC4F87B0CB /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				3F1AC25EAF515AE1D1FB2DB9 /* tvOS */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		1ABB3F6793E605ED4DED1EDE /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		AE86BF69572FD11DD3CD624B /* Corona_plugin_solarmqtt */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A8AF320590B4554C3706426D /* Build configuration list for PBXNativeTarget "Corona_plugin_solarmqtt" */;
+			buildPhases = (
+				1ABB3F6793E605ED4DED1EDE /* Headers */,
+				F608AC3376E1FB9E15888553 /* Sources */,
+				FFDC8B5B9E879E4E9FCC6E43 /* Frameworks */,
+				FA9F136DABA7CBA24D57E6DC /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Corona_plugin_solarmqtt;
+			productName = Corona_plugin_solarmqtt;
+			productReference = 1097C1F8B04B2DD097BA0445 /* Corona_plugin_solarmqtt.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		2BA55C29FEEE96D91CC580CF /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastSwiftUpdateCheck = 1600;
+				LastUpgradeCheck = 1600;
+			};
+			buildConfigurationList = E28BC0EF28FA5FE6A86CBA10 /* Build configuration list for PBXProject "Plugin" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = BD62CD88930BA4A1EBE2E5F2;
+			minimizedProjectReferenceProxies = 0;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 367CDC9AECC0488E98E6BE8C /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				AE86BF69572FD11DD3CD624B /* Corona_plugin_solarmqtt */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		FA9F136DABA7CBA24D57E6DC /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		F608AC3376E1FB9E15888553 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				43B47207CEAC67D4B22B282E /* libmosquitto.c in Sources */,
+				B6F9835195838ED45F0020A8 /* net_mosq.c in Sources */,
+				69F7BF56B7D2C3F16850199F /* handle_pubackcomp.c in Sources */,
+				6BE3B03BF9FC74ABC189B691 /* actions_subscribe.c in Sources */,
+				FD317D418907DB252CD62D15 /* loop.c in Sources */,
+				2C2450D5DD5A62FA9359EE4F /* handle_suback.c in Sources */,
+				0882E393CF60EEAFAF1FBD02 /* handle_ping.c in Sources */,
+				F59A615AE85BEA216E323685 /* handle_pubrel.c in Sources */,
+				50E909DABE0504DF6E9E15A4 /* messages_mosq.c in Sources */,
+				C2AE712F8039E565717A8026 /* packet_mosq.c in Sources */,
+				7F042697EEDCFA4AFA94BC99 /* send_connect.c in Sources */,
+				8E5C97AA21917090B244EA7D /* read_handle.c in Sources */,
+				B4097EDF8BC53A07160B316F /* will_mosq.c in Sources */,
+				10AA93EDC9AFB57F2D5835A7 /* handle_auth.c in Sources */,
+				9BBFE697DEC740206D4D8794 /* handle_unsuback.c in Sources */,
+				33F4E0D8EFED44408F647494 /* helpers.c in Sources */,
+				DE50BAF0498FC3F2558E95C2 /* handle_connack.c in Sources */,
+				506ADB4A569CF3DB1CBAFDEF /* thread_mosq.c in Sources */,
+				A8F4B8F98131D4597D13CC4E /* util_mosq.c in Sources */,
+				1FB133510322476E93162C2A /* send_publish.c in Sources */,
+				8C44DB2818D3968DA0FFFBCC /* handle_disconnect.c in Sources */,
+				F69F3BE6F2135151846AEA7E /* logging_mosq.c in Sources */,
+				6EDD0A7280235730729BBD1B /* send_mosq.c in Sources */,
+				3C2FA51CF93C9BC20C8A48BD /* send_unsubscribe.c in Sources */,
+				6FAC9B9075A200DF835B84F0 /* actions_publish.c in Sources */,
+				B3A8228C8F117851C2304011 /* handle_publish.c in Sources */,
+				5942ECC93C736FED43573696 /* connect.c in Sources */,
+				660410568AB0D582E2606F34 /* alias_mosq.c in Sources */,
+				CBFD1240038E2646AF6127FE /* callbacks.c in Sources */,
+				F9838C8A8BE3596ED3E1C5CC /* handle_pubrec.c in Sources */,
+				96E80835EF7BC9A2BDC38CD0 /* send_subscribe.c in Sources */,
+				4F672C3C773810715EF0887E /* packet_datatypes.c in Sources */,
+				B3A96CC0205CC7E729BE762E /* send_disconnect.c in Sources */,
+				820FADD3C2B5C53E81BCD07B /* actions_unsubscribe.c in Sources */,
+				052F95D70FF2B30C9FC8B834 /* options.c in Sources */,
+				7591AEC8E3B32DDF3A82C4E3 /* property_mosq.c in Sources */,
+				4A28C132708036E22681948E /* utf8_common.c in Sources */,
+				6992E4C820F02CE513AB1B14 /* topic_common.c in Sources */,
+				1E0F47F2B769BF8875DE9572 /* memory_common.c in Sources */,
+				8E5541D745FD58A539FD960B /* property_common.c in Sources */,
+				2F67F279F49F4F74806A10C2 /* random_common.c in Sources */,
+				562F309DEC789E5E935A4963 /* strings_common.c in Sources */,
+				7B4A681B8DE06254D79CDE5C /* time_common.c in Sources */,
+				B97AFA9CA91FA7C9C3D131AF /* PluginSolarMQTT.mm in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		51DFD76F477ED434338F962C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(HOME)/Library/Application Support/Corona/Native/Corona/tvos/frameworks/\"",
+				);
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_PREPROCESSOR_DEFINITIONS = "$(inherited)";
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(HOME)/Library/Application Support/Corona/Native/Corona/tvos/frameworks/CoronaCards.framework/PrivateHeaders\"",
+					"\"$(SRCROOT)/../shared_mosquitto\"",
+					"\"$(SRCROOT)/../shared_mosquitto/mosquitto\"",
+					"\"$(SRCROOT)/../shared_objc_PluginSolarMQTT\"",
+					"\"$(SRCROOT)/../shared_mosquitto/libcommon\"",
+					"\"$(SRCROOT)/../shared_mosquitto/cjson\"",
+				);
+				INFOPLIST_FILE = "$(SRCROOT)/Plugin/Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_NAME = Corona_plugin_solarmqtt;
+				SDKROOT = appletvos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = 3;
+				TVOS_DEPLOYMENT_TARGET = 12.0;
+				VALIDATE_PRODUCT = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
+		6574F20D7AEB60C3CE776DF7 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		AB7FBE0AE36770E392277936 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(HOME)/Library/Application Support/Corona/Native/Corona/tvos/frameworks/\"",
+				);
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_PREPROCESSOR_DEFINITIONS = "$(inherited)";
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(HOME)/Library/Application Support/Corona/Native/Corona/tvos/frameworks/CoronaCards.framework/PrivateHeaders\"",
+					"\"$(SRCROOT)/../shared_mosquitto\"",
+					"\"$(SRCROOT)/../shared_mosquitto/mosquitto\"",
+					"\"$(SRCROOT)/../shared_objc_PluginSolarMQTT\"",
+					"\"$(SRCROOT)/../shared_mosquitto/libcommon\"",
+					"\"$(SRCROOT)/../shared_mosquitto/cjson\"",
+				);
+				INFOPLIST_FILE = "$(SRCROOT)/Plugin/Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_NAME = Corona_plugin_solarmqtt;
+				SDKROOT = appletvos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = 3;
+				TVOS_DEPLOYMENT_TARGET = 12.0;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		B92B6091D9312175492BF6AE /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		A8AF320590B4554C3706426D /* Build configuration list for PBXNativeTarget "Corona_plugin_solarmqtt" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				51DFD76F477ED434338F962C /* Release */,
+				AB7FBE0AE36770E392277936 /* Debug */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		E28BC0EF28FA5FE6A86CBA10 /* Build configuration list for PBXProject "Plugin" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B92B6091D9312175492BF6AE /* Debug */,
+				6574F20D7AEB60C3CE776DF7 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 2BA55C29FEEE96D91CC580CF /* Project object */;
+}
