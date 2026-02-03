@@ -179,7 +179,8 @@ The `shared_mosquitto/` directory contains source files from the Eclipse Mosquit
 - `srv_mosq.c` — SRV lookup disabled
 - `socks_mosq.c` — SOCKS proxy disabled
 - `http_client.c`, `net_ws.c`, `extended_auth.c` — not needed
-- `cjson_common.c`, `base64_common.c`, `password_common.c`, `file_common.c`, `mqtt_common.c` — libcommon utilities not used
+- `cjson_common.c`, `base64_common.c`, `password_common.c`, `file_common.c` — libcommon utilities not used
+- Note: `mqtt_common.c` (libcommon) IS compiled — provides `mosquitto_varint_bytes()` needed at runtime
 
 **Patches applied to mosquitto source**:
 - `libcommon/random_common.c`: Added `#elif defined(__APPLE__)` branch using `arc4random_buf()` — original code only handled TLS (OpenSSL RAND_bytes), Linux (getrandom), and Windows (CryptGenRandom)
@@ -211,16 +212,16 @@ All three Xcode projects (mac, ios, tvos) include these header search paths:
 ["plugin.solarmqtt"] = {
     publisherId = "com.platopus",
     supportedPlatforms = {
-        android   = { url="https://github.com/platopus-systems/SolarMQTT/releases/download/v1.0.0/solarmqtt_android.tgz" },
-        iphone    = { url="https://github.com/platopus-systems/SolarMQTT/releases/download/v1.0.0/solarmqtt_iphone.tgz" },
-        ["iphone-sim"] = { url="https://github.com/platopus-systems/SolarMQTT/releases/download/v1.0.0/solarmqtt_iphone-sim.tgz" },
-        appletvos = { url="https://github.com/platopus-systems/SolarMQTT/releases/download/v1.0.0/solarmqtt_appletvos.tgz" },
-        ["mac-sim"] = { url="https://github.com/platopus-systems/SolarMQTT/releases/download/v1.0.0/solarmqtt_mac-sim.tgz" },
+        android   = { url="https://github.com/platopus-systems/SolarMQTT/releases/latest/download/solarmqtt_android.tgz" },
+        iphone    = { url="https://github.com/platopus-systems/SolarMQTT/releases/latest/download/solarmqtt_iphone.tgz" },
+        ["iphone-sim"] = { url="https://github.com/platopus-systems/SolarMQTT/releases/latest/download/solarmqtt_iphone-sim.tgz" },
+        appletvos = { url="https://github.com/platopus-systems/SolarMQTT/releases/latest/download/solarmqtt_appletvos.tgz" },
+        ["mac-sim"] = { url="https://github.com/platopus-systems/SolarMQTT/releases/latest/download/solarmqtt_mac-sim.tgz" },
     },
 },
 ```
 
-Bump version in URLs when releasing new versions (e.g. `v1.0.0` → `v1.1.0`).
+Uses GitHub's `releases/latest/download/` redirect URL — always resolves to the most recent release. No version bumps needed in consuming projects when a new plugin version is released.
 
 ## Test Harness (Corona/main.lua)
 
@@ -244,6 +245,35 @@ On-screen scrolling event log shows all MQTT events with timestamps.
 3. **`NSLog`/`NSString` undeclared** — Added `#import <Foundation/Foundation.h>` to PluginSolarMQTT.mm
 4. **`utlist.h` not found** — Copied from mosquitto/deps/ to shared_mosquitto/
 5. **`random_common.c` "No suitable random function found"** — Added `#elif defined(__APPLE__)` branch using `arc4random_buf()`
+
+### Runtime Errors Fixed During Testing
+
+6. **CI: macOS dylib name mismatch** — Xcode builds `libplugin_solarmqtt.dylib` (with `lib` prefix) but CI scripts referenced `plugin_solarmqtt.dylib`. Fixed all references in `build-plugin.yml`.
+7. **CI: Android `final` variable error** — `topic` and `qos` local variables accessed from inner class. Made them `final`.
+8. **`dlopen` missing `_mosquitto_varint_bytes` symbol** — `mqtt_common.c` (in `shared_mosquitto/libcommon/`) was not included in Xcode builds. Added to all three Xcode projects (mac, ios, tvos).
+9. **`loop_start failed: Invalid input`** — `mosquitto_threaded_set(mosq_client, true)` sets `mosq->threaded = mosq_ts_external`, but `mosquitto_loop_start()` requires `mosq_ts_none`. Removed the `mosquitto_threaded_set()` call entirely.
+10. **`Connect failed: Socket is not connected`** — `mosquitto_connect_async()` was called before `mosquitto_loop_start()`. The async connect needs the loop thread already running to handle TCP. Fixed by calling `mosquitto_loop_start()` first, then `mosquitto_connect_async()`.
+
+### Correct mosquitto connect sequence (PluginSolarMQTT.mm)
+
+The connect sequence must be:
+1. `mosquitto_new()` — create client
+2. Set callbacks (`mosquitto_connect_callback_set`, etc.)
+3. `mosquitto_username_pw_set()` — if credentials provided
+4. `mosquitto_loop_start()` — start the network thread (**before** connect)
+5. `mosquitto_connect_async()` — initiate TCP connection (loop thread handles it)
+
+**Do NOT call `mosquitto_threaded_set(true)`** — that sets `mosq_ts_external` which conflicts with `loop_start()`.
+
+## Cross-Machine Plugin Installation
+
+An installer script (`install-plugins.sh`) is available for quickly deploying the latest macOS simulator plugins across multiple Macs:
+
+```bash
+bash install-plugins.sh
+```
+
+The script uses `curl` (no `gh` CLI required) to download the latest releases from GitHub using `releases/latest/download/` URLs, extracts the dylibs, ad-hoc codesigns them, and installs to `~/Library/Application Support/Corona/Simulator/Plugins/`. The script lives in the shared Dropbox folder alongside the Corona projects.
 
 ## Future Enhancements
 
