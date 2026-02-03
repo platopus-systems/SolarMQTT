@@ -52,13 +52,13 @@ jobs:
             CONFIGURATION_BUILD_DIR="$(pwd)/mac/build/Release"
 
       - name: Codesign dylib
-        run: codesign -s - -f mac/build/Release/plugin_solarmqtt.dylib
+        run: codesign -s - -f mac/build/Release/libplugin_solarmqtt.dylib
 
       - name: Upload macOS artifact
         uses: actions/upload-artifact@v4
         with:
           name: macos-plugin
-          path: mac/build/Release/plugin_solarmqtt.dylib
+          path: mac/build/Release/libplugin_solarmqtt.dylib
 
   build-ios:
     runs-on: macos-latest
@@ -289,7 +289,7 @@ jobs:
           tar -czf release/solarmqtt_mac-sim.tgz -C artifacts/macos-plugin .
 
           # Also copy raw binaries for direct download
-          cp artifacts/macos-plugin/plugin_solarmqtt.dylib release/
+          cp artifacts/macos-plugin/libplugin_solarmqtt.dylib release/
           cp artifacts/android-plugin/plugin.solarmqtt.jar release/
 
       - name: Delete existing release (if re-tagging)

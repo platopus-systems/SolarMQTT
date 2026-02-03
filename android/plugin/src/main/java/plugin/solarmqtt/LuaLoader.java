@@ -266,8 +266,8 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 			return 0;
 		}
 
-		String topic = L.checkString(1);
-		int qos = L.isNumber(2) ? (int)L.toNumber(2) : 0;
+		final String topic = L.checkString(1);
+		final int qos = L.isNumber(2) ? (int)L.toNumber(2) : 0;
 
 		try {
 			mqttClient.subscribe(topic, qos, null, new IMqttActionListener() {
