@@ -314,8 +314,9 @@ PluginSolarMQTT::connect_broker( lua_State *L )
 				passwordStr ? [passwordStr UTF8String] : NULL);
 		}
 
-		// Enable threading (required for mosquitto_loop_start)
-		mosquitto_threaded_set(mosq_client, true);
+		// Note: do NOT call mosquitto_threaded_set(true) here.
+		// That sets mosq->threaded = mosq_ts_external, but loop_start()
+		// requires mosq_ts_none so it can manage its own thread.
 
 		// Connect asynchronously
 		int rc = mosquitto_connect_async(mosq_client,
