@@ -50,12 +50,14 @@
 		D3ADB6E6316A444544725B48 /* send_disconnect.c in Sources */ = {isa = PBXBuildFile; fileRef = 37F9681F4211B4619CE9E669 /* send_disconnect.c */; };
 		D7F7FFF59487AFB89231A292 /* connect.c in Sources */ = {isa = PBXBuildFile; fileRef = E991A6E863A1639F10B6864A /* connect.c */; };
 		DCBD8AE4BE000A7D1028860A /* strings_common.c in Sources */ = {isa = PBXBuildFile; fileRef = 5B7A78820CF678793C15A0B5 /* strings_common.c */; };
+		EA0D6A55F17FB19B90B2EA3A /* mqtt_common.c in Sources */ = {isa = PBXBuildFile; fileRef = 049F2C286A2B1267CC617536 /* mqtt_common.c */; };
 		FE7BBDF07D432E6D7C1879AC /* property_common.c in Sources */ = {isa = PBXBuildFile; fileRef = B27A73E296EED9D93238EAD7 /* property_common.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		00BF055A5CC4FB62943D82CD /* send_mosq.c */ = {isa = PBXFileReference; includeInIndex = 1; path = send_mosq.c; sourceTree = "<group>"; };
 		047B037593D40D23EF36E740 /* handle_pubrec.c */ = {isa = PBXFileReference; includeInIndex = 1; path = handle_pubrec.c; sourceTree = "<group>"; };
+		049F2C286A2B1267CC617536 /* mqtt_common.c */ = {isa = PBXFileReference; includeInIndex = 1; path = mqtt_common.c; sourceTree = "<group>"; };
 		10CFB17B20F67876C18EC1F2 /* packet_mosq.c */ = {isa = PBXFileReference; includeInIndex = 1; path = packet_mosq.c; sourceTree = "<group>"; };
 		11AEE315FF2C591A32A5A74D /* messages_mosq.c */ = {isa = PBXFileReference; includeInIndex = 1; path = messages_mosq.c; sourceTree = "<group>"; };
 		203D3765206230D76AF418A9 /* net_mosq.c */ = {isa = PBXFileReference; includeInIndex = 1; path = net_mosq.c; sourceTree = "<group>"; };
@@ -201,6 +203,7 @@
 				A73CABC0A83AF050B95C498F /* random_common.c */,
 				5B7A78820CF678793C15A0B5 /* strings_common.c */,
 				5D0DE4FAC88E7071E9E15D30 /* time_common.c */,
+				049F2C286A2B1267CC617536 /* mqtt_common.c */,
 			);
 			name = libcommon;
 			path = ../shared_mosquitto/libcommon;
@@ -314,6 +317,7 @@
 				DCBD8AE4BE000A7D1028860A /* strings_common.c in Sources */,
 				3794B045F69FDE10E6600B64 /* time_common.c in Sources */,
 				1B7140769A9C6EF213DAFA95 /* PluginSolarMQTT.mm in Sources */,
+				EA0D6A55F17FB19B90B2EA3A /* mqtt_common.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

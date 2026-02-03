@@ -47,6 +47,7 @@
 		D3275446E2486AB40D830906 /* messages_mosq.c in Sources */ = {isa = PBXBuildFile; fileRef = EB3622A7D5855675E7EADA97 /* messages_mosq.c */; };
 		D8777655AED54DDF09DDD02A /* PluginSolarMQTT.mm in Sources */ = {isa = PBXBuildFile; fileRef = B5B83621A86C04AE4B1A3F59 /* PluginSolarMQTT.mm */; };
 		DDDE95202F64FD6587DE9EE7 /* packet_datatypes.c in Sources */ = {isa = PBXBuildFile; fileRef = 429729BEFD6EA37856DCD4EA /* packet_datatypes.c */; };
+		DE2E542274AF92E4459CFBC0 /* mqtt_common.c in Sources */ = {isa = PBXBuildFile; fileRef = 3B19A9DEA818A570D71C776D /* mqtt_common.c */; };
 		E5DCD1CDD2B3DD28DA3BFF96 /* send_disconnect.c in Sources */ = {isa = PBXBuildFile; fileRef = 464D8BC765FD391F09E06A54 /* send_disconnect.c */; };
 		E77D07458281B3C88F19B7B9 /* handle_auth.c in Sources */ = {isa = PBXBuildFile; fileRef = AE14E88F9CEE692BAFC08B3D /* handle_auth.c */; };
 		EF0CB099C7A1E6FFFF2C19A2 /* loop.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D2A569F01869187C89BA479 /* loop.c */; };
@@ -68,6 +69,7 @@
 		287F51978DE29462FB980F4C /* random_common.c */ = {isa = PBXFileReference; includeInIndex = 1; path = random_common.c; sourceTree = "<group>"; };
 		3668ED198AECD48894C19594 /* handle_connack.c */ = {isa = PBXFileReference; includeInIndex = 1; path = handle_connack.c; sourceTree = "<group>"; };
 		39BB884A149F3848DAF4317A /* handle_pubrec.c */ = {isa = PBXFileReference; includeInIndex = 1; path = handle_pubrec.c; sourceTree = "<group>"; };
+		3B19A9DEA818A570D71C776D /* mqtt_common.c */ = {isa = PBXFileReference; includeInIndex = 1; path = mqtt_common.c; sourceTree = "<group>"; };
 		429729BEFD6EA37856DCD4EA /* packet_datatypes.c */ = {isa = PBXFileReference; includeInIndex = 1; path = packet_datatypes.c; sourceTree = "<group>"; };
 		454547C9CA3EDA20DC1F013A /* thread_mosq.c */ = {isa = PBXFileReference; includeInIndex = 1; path = thread_mosq.c; sourceTree = "<group>"; };
 		464D8BC765FD391F09E06A54 /* send_disconnect.c */ = {isa = PBXFileReference; includeInIndex = 1; path = send_disconnect.c; sourceTree = "<group>"; };
@@ -134,6 +136,7 @@
 				287F51978DE29462FB980F4C /* random_common.c */,
 				0E72147AE915EB068894C0BE /* strings_common.c */,
 				83887AF4EA92066BDF7B3097 /* time_common.c */,
+				3B19A9DEA818A570D71C776D /* mqtt_common.c */,
 			);
 			name = libcommon;
 			path = ../shared_mosquitto/libcommon;
@@ -326,6 +329,7 @@
 				CE2FAAAD838827883F958EE5 /* strings_common.c in Sources */,
 				BE7854C889A0D131A880D1E8 /* time_common.c in Sources */,
 				D8777655AED54DDF09DDD02A /* PluginSolarMQTT.mm in Sources */,
+				DE2E542274AF92E4459CFBC0 /* mqtt_common.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
