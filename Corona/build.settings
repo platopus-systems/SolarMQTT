@@ -4,6 +4,13 @@ settings =
         ["plugin.solarmqtt"] =
         {
             publisherId = "com.platopus",
+            supportedPlatforms = {
+                android   = { url="https://github.com/platopus-systems/SolarMQTT/releases/latest/download/solarmqtt_android.tgz" },
+                iphone    = { url="https://github.com/platopus-systems/SolarMQTT/releases/latest/download/solarmqtt_iphone.tgz" },
+                ["iphone-sim"] = { url="https://github.com/platopus-systems/SolarMQTT/releases/latest/download/solarmqtt_iphone-sim.tgz" },
+                appletvos = { url="https://github.com/platopus-systems/SolarMQTT/releases/latest/download/solarmqtt_appletvos.tgz" },
+                ["mac-sim"] = { url="https://github.com/platopus-systems/SolarMQTT/releases/latest/download/solarmqtt_mac-sim.tgz" },
+            },
         },
     },
 

@@ -36,7 +36,7 @@ import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 @SuppressWarnings("WeakerAccess")
 public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 	private static final String TAG = "SolarMQTT";
-	private static final String VERSION = "1.3.0";
+	private static final String VERSION = "1.3.1";
 
 	public static int fListener;
 	public static final String EVENT_NAME = "pluginsolarmqtt";

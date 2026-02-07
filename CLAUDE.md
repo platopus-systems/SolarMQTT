@@ -58,8 +58,8 @@ mqtt.connect({
 
 ## Current Version
 
-- **Plugin version**: 1.3.0
-- **Build number**: 9 (exposed as `mqtt.BUILD` in Lua, matched by `EXPECTED_BUILD` in `Corona/main.lua`)
+- **Plugin version**: 1.3.1
+- **Build number**: 10 (exposed as `mqtt.BUILD` in Lua, matched by `EXPECTED_BUILD` in `Corona/main.lua`)
 - Both `PluginSolarMQTT.mm`, `LuaLoader.java`, and `Corona/main.lua` track BUILD numbers. Bump all when changing plugin code.
 
 ## Building
@@ -204,8 +204,8 @@ mqtt.disconnect(function(event)                -- with optional disconnect callb
     print("Disconnected: " .. event.errorMessage)
 end)
 
-print(mqtt.VERSION)  -- "1.3.0"
-print(mqtt.BUILD)    -- 9
+print(mqtt.VERSION)  -- "1.3.1"
+print(mqtt.BUILD)    -- 10
 ```
 
 ### MQTT 3.1.1 Server Acknowledgements Coverage (v1.3.0)
@@ -315,6 +315,7 @@ All three Xcode projects (mac, ios, tvos) include these header search paths:
 - `$(SRCROOT)/../shared_mosquitto/cjson`
 - `$(SRCROOT)/../shared_objc_PluginSolarMQTT`
 - `$(SRCROOT)/../shared_openssl/include` — OpenSSL headers (v1.1.0+)
+- `$(SRCROOT)/../shared_openssl` — `cacert.h` embedded CA bundle (ios/tvos only, v1.3.1+)
 
 **Linked frameworks** (v1.1.0+):
 - `ssl.xcframework` — OpenSSL SSL library
@@ -423,6 +424,9 @@ Indicator colours: grey (pending), amber (running), green (pass), red (fail/time
 10. **`Connect failed: Socket is not connected`** — `mosquitto_connect_async()` was called before `mosquitto_loop_start()`. The async connect needs the loop thread already running to handle TCP. Fixed by calling `mosquitto_loop_start()` first, then `mosquitto_connect_async()`.
 
 11. **`cast from pointer to smaller type 'int' loses information`** — `CoronaLuaRef` is `void*` (8 bytes on arm64) but was being cast to `int` (4 bytes) when boxing into `NSNumber` via `@((int)callbackRef)`. Fixed by using `@((intptr_t)callbackRef)` for boxing and `(CoronaLuaRef)(intptr_t)[refNum integerValue]` for unboxing.
+12. **CI: `'cacert.h' file not found` on iOS/tvOS** — `cacert.h` lives in `shared_openssl/` root but only `shared_openssl/include` was in HEADER_SEARCH_PATHS. Added `$(SRCROOT)/../shared_openssl` to ios and tvos Xcode projects. macOS was unaffected because `cacert.h` is guarded by `#if !TARGET_OS_OSX`.
+13. **CI: tvOS build failure silently swallowed** — `xcodebuild || true` in CI masked compile errors, causing the subsequent "create static library" step to fail with "no object files found". Removed `|| true`.
+14. **Simulator build: `no table supportedPlatforms provided`** — `Corona/build.settings` was missing the `supportedPlatforms` table with GitHub release download URLs. Solar2D couldn't resolve the plugin for device builds or `mac-sim` placeholder downloads.
 
 ### Correct mosquitto connect sequence (PluginSolarMQTT.mm)
 

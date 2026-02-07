@@ -392,6 +392,7 @@
 					"\"$(SRCROOT)/../shared_mosquitto/libcommon\"",
 					"\"$(SRCROOT)/../shared_mosquitto/cjson\"",
 					"\"$(SRCROOT)/../shared_openssl/include\"",
+					"\"$(SRCROOT)/../shared_openssl\"",
 				);
 				INFOPLIST_FILE = "$(SRCROOT)/Plugin/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
@@ -486,6 +487,7 @@
 					"\"$(SRCROOT)/../shared_mosquitto/libcommon\"",
 					"\"$(SRCROOT)/../shared_mosquitto/cjson\"",
 					"\"$(SRCROOT)/../shared_openssl/include\"",
+					"\"$(SRCROOT)/../shared_openssl\"",
 				);
 				INFOPLIST_FILE = "$(SRCROOT)/Plugin/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";

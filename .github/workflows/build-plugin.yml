@@ -172,7 +172,7 @@ jobs:
             -target "Corona_plugin_solarmqtt" \
             -configuration Release \
             -sdk appletvos \
-            TVOS_DEPLOYMENT_TARGET=12.0 || true
+            TVOS_DEPLOYMENT_TARGET=12.0
 
       - name: Create tvOS static library from compiled objects
         run: |

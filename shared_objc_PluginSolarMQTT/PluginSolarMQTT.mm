@@ -261,10 +261,10 @@ PluginSolarMQTT::Open( lua_State *L )
 	luaL_openlib( L, kName, kVTable, 1 );
 
 	// Expose plugin version and build number to Lua
-	lua_pushstring(L, "1.3.0");
+	lua_pushstring(L, "1.3.1");
 	lua_setfield(L, -2, "VERSION");
 
-	lua_pushinteger(L, 9);
+	lua_pushinteger(L, 10);
 	lua_setfield(L, -2, "BUILD");
 
 	return 1;

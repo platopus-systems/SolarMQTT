@@ -7,7 +7,7 @@ local mqtt = require("plugin.solarmqtt")
 -- Build check — ensure the installed dylib matches this test harness
 -- ============================================================================
 
-local EXPECTED_BUILD = 9
+local EXPECTED_BUILD = 10
 
 if (mqtt.BUILD or 0) ~= EXPECTED_BUILD then
     print("[SolarMQTT] ERROR: Plugin build mismatch! Expected BUILD=" ..
