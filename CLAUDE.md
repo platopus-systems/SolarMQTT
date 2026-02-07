@@ -102,6 +102,7 @@ SolarMQTT/
 ├── CLAUDE.md
 ├── LICENSE                                # EPL-2.0 (matching mosquitto)
 ├── README.md
+├── patch-solar2d-arm-sim.sh               # Patches Solar2D templates for arm64 simulator
 ├── Corona/                                # Test harness for simulator
 │   ├── main.lua                           # Buttons: Connect, Subscribe, Publish, etc.
 │   ├── config.lua                         # 320x480, zoomEven
@@ -476,6 +477,24 @@ bash install-plugins.sh
 ```
 
 The script uses `curl` (no `gh` CLI required) to download the latest releases from GitHub using `releases/latest/download/` URLs, extracts the dylibs, ad-hoc codesigns them, and installs to `~/Library/Application Support/Corona/Simulator/Plugins/`. The script lives in the shared Dropbox folder alongside the Corona projects.
+
+## iOS Simulator Build (requires Solar2D patch)
+
+**Status**: Works after patching Solar2D templates. iOS device builds work without any patches.
+
+Solar2D 3727 has two bugs that prevent iOS Simulator builds on Apple Silicon Macs. The `patch-solar2d-arm-sim.sh` script fixes both:
+
+1. **Missing arm64 in simulator architecture list** — Solar2D's `Defaults.lua` only compiles x86_64 for simulator targets. On Apple Silicon, the simulator is arm64-native. The patch adds `"arm64"` to `modernSlices()`.
+
+2. **Wrong linker flag for arm64 simulator** — `Defaults.lua` hardcodes `-miphoneos-version-min=11.0` for ALL builds. For arm64 simulator, this must be `-mios-simulator-version-min=11.0`. Without the fix, the linker fatally errors: `ld: building for 'iOS', but linking in dylib ... built for 'iOS-simulator'`. The patch replaces the flag in simulator templates only.
+
+3. **Harmless OpenSSL deployment target warnings** (not fixed by patch) — The OpenSSL xcframework was compiled with `IPHONEOS_DEPLOYMENT_TARGET=13.4`, but Solar2D links with version-min 11.0. Every `.o` in OpenSSL triggers a warning. These produce hundreds of lines of log noise but don't affect the build. Fixing would require rebuilding OpenSSL with a lower deployment target.
+
+```bash
+bash patch-solar2d-arm-sim.sh
+```
+
+Must be re-run after reinstalling Solar2D. The script modifies `.tar.bz` archives inside `/Applications/Corona-3727/Corona Simulator.app/Contents/Resources/iostemplate/`. The `build.settings` `minOsVersion` setting does NOT control the linker flag — it's hardcoded in Solar2D's internal `Defaults.lua` (line 165 inside the template archives).
 
 ## Future Enhancements
 

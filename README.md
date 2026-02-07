@@ -237,11 +237,11 @@ end)
 
 ### `mqtt.VERSION`
 
-String constant containing the plugin version. Currently `"1.3.0"`.
+String constant containing the plugin version. Currently `"1.3.1"`.
 
 ### `mqtt.BUILD`
 
-Integer constant containing the build number. Currently `9`.
+Integer constant containing the build number. Currently `10`.
 
 ---
 
@@ -499,6 +499,16 @@ cp mac/build/Release/libplugin_solarmqtt.dylib \
 ```
 
 Then open `Corona/main.lua` in the Solar2D Simulator to run the test harness.
+
+### iOS Simulator on Apple Silicon
+
+Solar2D 3727 has bugs that prevent iOS Simulator builds on Apple Silicon Macs. A patch script is included to fix the Solar2D templates:
+
+```bash
+bash patch-solar2d-arm-sim.sh
+```
+
+This must be re-run after reinstalling Solar2D. iOS **device** builds work without any patches.
 
 ---
 
