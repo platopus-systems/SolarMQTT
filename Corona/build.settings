@@ -1,5 +1,11 @@
 settings =
 {
+    orientation =
+    {
+        default = "landscapeRight",
+        supported = { "landscapeRight", "portrait" },
+    },
+
     plugins = {
         ["plugin.solarmqtt"] =
         {
@@ -15,6 +21,17 @@ settings =
     },
 
     iphone =
+    {
+        plist =
+        {
+            NSAppTransportSecurity =
+            {
+                NSAllowsArbitraryLoads = true,
+            },
+        },
+    },
+
+    tvos =
     {
         plist =
         {

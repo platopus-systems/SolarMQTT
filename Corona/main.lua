@@ -144,9 +144,18 @@ local STATUS_COLORS = {
 -- Test Definitions (20 granular tests)
 -- ============================================================================
 
--- Forward declaration: markTestPassed is defined after testDefs but referenced
--- inside per-op callback closures (tests 18-19 passFromCallback pattern)
+-- Forward declarations: these are defined later but referenced inside closures
+-- that execute at runtime (not at load time)
 local markTestPassed
+local updateFocusRing
+
+-- Focus system variables (declared early so closures can capture them)
+local buttonList = {}       -- ordered list of { bg, label, onTap, col }
+local focusIndex = 1        -- currently focused button (1-based)
+local focusRing = nil       -- highlight ring display object (created later)
+local focusMode = "menu"    -- "menu" or "overlay" (which set of buttons is active)
+local overlayBackButton = nil  -- the "Back to Menu" button in test overlay
+local COLS = 2              -- number of columns in button grid
 
 local testDefs = {
     -- Group 1: Public broker (non-TLS)
@@ -594,13 +603,20 @@ local function createTestOverlay()
     })
     backTxt:setFillColor(0.8, 0.8, 0.9)
 
+    -- Store for focus navigation
+    overlayBackButton = backBg
+
     backBg:addEventListener("tap", function()
         if testState.running then return true end  -- Don't allow back during tests
         if testOverlayGroup then
             testOverlayGroup:removeSelf()
             testOverlayGroup = nil
         end
+        overlayBackButton = nil
         menuGroup.isVisible = true
+        focusMode = "menu"
+        menuGroup:insert(focusRing)
+        updateFocusRing()
         return true
     end)
 end
@@ -614,6 +630,13 @@ local function startTestSuite()
     -- Hide menu, show test overlay
     menuGroup.isVisible = false
     createTestOverlay()
+
+    -- Move focus to overlay
+    focusMode = "overlay"
+    if testOverlayGroup and focusRing then
+        testOverlayGroup:insert(focusRing)
+    end
+    updateFocusRing()
 
     -- Reset state
     testState.running = true
@@ -696,7 +719,7 @@ mqtt.init(mqttListener)
 addLog("v" .. (mqtt.VERSION or "?") .. " build " .. tostring(mqtt.BUILD or "?"))
 
 -- ============================================================================
--- Buttons
+-- Buttons + Focus Navigation (tvOS Apple TV remote support)
 -- ============================================================================
 
 local buttonY = 55
@@ -728,6 +751,10 @@ local function makeButton(label, x, y, onTap, color)
         onTap()
         return true
     end)
+
+    -- Register for focus navigation
+    local col = (x < display.contentCenterX) and 1 or 2
+    buttonList[#buttonList + 1] = { bg = bg, label = label, onTap = onTap, col = col }
 
     return bg, txt
 end
@@ -854,4 +881,106 @@ local topicInfo = display.newText({
 })
 topicInfo:setFillColor(0.5, 0.5, 0.5)
 
-addLog("Tap Run All Tests or individual buttons")
+-- ============================================================================
+-- Focus Ring + Key Event Navigation (for tvOS / keyboard)
+-- ============================================================================
+
+-- Create focus ring (bright border, no fill)
+focusRing = display.newRoundedRect(menuGroup, 0, 0, buttonW + 6, buttonH + 6, 6)
+focusRing:setFillColor(0, 0, 0, 0)
+focusRing.strokeWidth = 2
+focusRing:setStrokeColor(1, 1, 0.3)
+
+updateFocusRing = function()
+    if focusMode == "menu" then
+        local btn = buttonList[focusIndex]
+        if btn and btn.bg then
+            focusRing.x = btn.bg.x
+            focusRing.y = btn.bg.y
+            focusRing.width = buttonW + 6
+            focusRing.height = buttonH + 6
+            focusRing.isVisible = menuGroup.isVisible
+        end
+    elseif focusMode == "overlay" and overlayBackButton then
+        focusRing.x = overlayBackButton.x
+        focusRing.y = overlayBackButton.y
+        focusRing.width = 166
+        focusRing.height = 34
+        focusRing.isVisible = true
+    end
+end
+
+local function setFocusIndex(newIndex)
+    if newIndex < 1 then newIndex = #buttonList end
+    if newIndex > #buttonList then newIndex = 1 end
+    focusIndex = newIndex
+    updateFocusRing()
+end
+
+-- Initialize focus ring on first button
+setFocusIndex(1)
+
+local function onKeyEvent(event)
+    if event.phase ~= "down" then return false end
+
+    local keyName = event.keyName
+
+    -- Select button (Apple TV remote select, keyboard space/enter)
+    if keyName == "buttonA" or keyName == "space" or keyName == "enter" or keyName == "center" then
+        if focusMode == "menu" then
+            local btn = buttonList[focusIndex]
+            if btn then
+                addLog("BUTTON: " .. btn.label)
+                -- Visual press feedback
+                transition.to(btn.bg, { time = 50, xScale = 0.9, yScale = 0.9, onComplete = function()
+                    transition.to(btn.bg, { time = 50, xScale = 1, yScale = 1 })
+                end })
+                btn.onTap()
+            end
+        elseif focusMode == "overlay" then
+            -- Activate the Back to Menu button (only if tests are done)
+            if not testState.running and testOverlayGroup then
+                testOverlayGroup:removeSelf()
+                testOverlayGroup = nil
+                overlayBackButton = nil
+                menuGroup.isVisible = true
+                focusMode = "menu"
+                menuGroup:insert(focusRing)
+                updateFocusRing()
+            end
+        end
+        return true
+
+    -- D-pad navigation
+    elseif keyName == "up" then
+        if focusMode == "menu" then
+            -- Move up one row (skip 2 for 2-column layout)
+            setFocusIndex(focusIndex - COLS)
+        end
+        return true
+
+    elseif keyName == "down" then
+        if focusMode == "menu" then
+            setFocusIndex(focusIndex + COLS)
+        end
+        return true
+
+    elseif keyName == "left" then
+        if focusMode == "menu" then
+            setFocusIndex(focusIndex - 1)
+        end
+        return true
+
+    elseif keyName == "right" then
+        if focusMode == "menu" then
+            setFocusIndex(focusIndex + 1)
+        end
+        return true
+    end
+
+    return false
+end
+
+Runtime:addEventListener("key", onKeyEvent)
+
+addLog("Tap buttons or use remote/keyboard")
