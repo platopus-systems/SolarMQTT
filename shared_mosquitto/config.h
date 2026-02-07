@@ -20,7 +20,7 @@
  * Feature flags — all optional features disabled for minimal build
  * ============================================================ */
 
-/* #undef WITH_TLS           -- no OpenSSL dependency */
+#define WITH_TLS             /* OpenSSL via xcframeworks */
 /* #undef WITH_TLS_PSK       -- no pre-shared key TLS */
 /* #undef WITH_SRV           -- no DNS SRV lookup */
 /* #undef WITH_BROKER        -- client library only */

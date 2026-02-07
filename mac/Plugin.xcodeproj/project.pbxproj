@@ -23,10 +23,13 @@
 		4C73F1512AE0CA8955D5EE1F /* topic_common.c in Sources */ = {isa = PBXBuildFile; fileRef = D4BD06F2D3D0143A8B9A88C1 /* topic_common.c */; };
 		50A06F6B6548DBF7CAEE782E /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C3C898485BAB9ECE64337A9B /* Cocoa.framework */; };
 		50EBD1A132CA73DA6D9883F6 /* read_handle.c in Sources */ = {isa = PBXBuildFile; fileRef = 00046E1F1AA49091A3373C93 /* read_handle.c */; };
+		54C165D57B7E0D00BA5AEC60 /* file_common.c in Sources */ = {isa = PBXBuildFile; fileRef = A691C8298312DE978C883981 /* file_common.c */; };
 		5759BB0D7C6818A093DB0F3E /* memory_common.c in Sources */ = {isa = PBXBuildFile; fileRef = 0212737DD78DCF3E64820E68 /* memory_common.c */; };
 		58B66455279D39F6222D3839 /* actions_unsubscribe.c in Sources */ = {isa = PBXBuildFile; fileRef = 062C7392989CD5617E6D8411 /* actions_unsubscribe.c */; };
+		60AD48505A3F0CFABF4285AD /* ssl.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 068129D593303E0776D2EB27 /* ssl.xcframework */; };
 		64C84DC4649B309DC83D0CA2 /* thread_mosq.c in Sources */ = {isa = PBXBuildFile; fileRef = 454547C9CA3EDA20DC1F013A /* thread_mosq.c */; };
 		6DA86C5969F5FFCD0E136C6A /* handle_unsuback.c in Sources */ = {isa = PBXBuildFile; fileRef = D523A48793859077E1C73732 /* handle_unsuback.c */; };
+		7359D7B145EA66C4E502A2DA /* crypto.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7CAED35E71E69DE6BD9D0A45 /* crypto.xcframework */; };
 		770FF3E1F126BDD191A1225E /* handle_pubackcomp.c in Sources */ = {isa = PBXBuildFile; fileRef = 05EEF9C6D0D6EA72FB045F35 /* handle_pubackcomp.c */; };
 		80B943B50815F6AA65AA3C64 /* libmosquitto.c in Sources */ = {isa = PBXBuildFile; fileRef = EC09E931C2A1AD37BCAA83D3 /* libmosquitto.c */; };
 		89BB68F38F061946DB116A61 /* actions_publish.c in Sources */ = {isa = PBXBuildFile; fileRef = 657F0DA8BFEEAC4BC6D3E0FA /* actions_publish.c */; };
@@ -36,6 +39,7 @@
 		A087564D2ABE72C8A0EE1186 /* handle_ping.c in Sources */ = {isa = PBXBuildFile; fileRef = E4042191B94A8E7917F3A45F /* handle_ping.c */; };
 		A16EFE5583A6D85DFA06C368 /* net_mosq.c in Sources */ = {isa = PBXBuildFile; fileRef = F8C9B2F8AE77234C0361BCD5 /* net_mosq.c */; };
 		A935A296A5BC383D19B99E4F /* utf8_common.c in Sources */ = {isa = PBXBuildFile; fileRef = 650337D6AFAF5276B1EE7316 /* utf8_common.c */; };
+		AB5F18BF77C6FA3D1F294DAE /* tls_mosq.c in Sources */ = {isa = PBXBuildFile; fileRef = 5A92ACF0D93AE8A1E4A7B8D8 /* tls_mosq.c */; };
 		B1290F8C93DE752BD1E90E9A /* send_connect.c in Sources */ = {isa = PBXBuildFile; fileRef = 4BEC8D503D19EE568E78C733 /* send_connect.c */; };
 		B1EAADDF22E3315B0D596C7A /* send_mosq.c in Sources */ = {isa = PBXBuildFile; fileRef = A210592414921BC6045571CB /* send_mosq.c */; };
 		B61926002F7E9392F2D653DC /* handle_suback.c in Sources */ = {isa = PBXBuildFile; fileRef = E84F753239FF9918F651DCB7 /* handle_suback.c */; };
@@ -51,6 +55,7 @@
 		E5DCD1CDD2B3DD28DA3BFF96 /* send_disconnect.c in Sources */ = {isa = PBXBuildFile; fileRef = 464D8BC765FD391F09E06A54 /* send_disconnect.c */; };
 		E77D07458281B3C88F19B7B9 /* handle_auth.c in Sources */ = {isa = PBXBuildFile; fileRef = AE14E88F9CEE692BAFC08B3D /* handle_auth.c */; };
 		EF0CB099C7A1E6FFFF2C19A2 /* loop.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D2A569F01869187C89BA479 /* loop.c */; };
+		F29292BE2D977655B9897ACB /* net_mosq_ocsp.c in Sources */ = {isa = PBXBuildFile; fileRef = 3C5944269430E770E3FF373A /* net_mosq_ocsp.c */; };
 		F7A13025253CD05D749E9F89 /* property_common.c in Sources */ = {isa = PBXBuildFile; fileRef = BACC9839C9527076D919595A /* property_common.c */; };
 		FA603B5B03C8B4B2598A480A /* random_common.c in Sources */ = {isa = PBXBuildFile; fileRef = 287F51978DE29462FB980F4C /* random_common.c */; };
 /* End PBXBuildFile section */
@@ -60,6 +65,7 @@
 		0212737DD78DCF3E64820E68 /* memory_common.c */ = {isa = PBXFileReference; includeInIndex = 1; path = memory_common.c; sourceTree = "<group>"; };
 		05EEF9C6D0D6EA72FB045F35 /* handle_pubackcomp.c */ = {isa = PBXFileReference; includeInIndex = 1; path = handle_pubackcomp.c; sourceTree = "<group>"; };
 		062C7392989CD5617E6D8411 /* actions_unsubscribe.c */ = {isa = PBXFileReference; includeInIndex = 1; path = actions_unsubscribe.c; sourceTree = "<group>"; };
+		068129D593303E0776D2EB27 /* ssl.xcframework */ = {isa = PBXFileReference; includeInIndex = 1; name = ssl.xcframework; path = ../shared_openssl/ssl.xcframework; sourceTree = SOURCE_ROOT; };
 		0C2A39DD4B660164BC9989B6 /* property_mosq.c */ = {isa = PBXFileReference; includeInIndex = 1; path = property_mosq.c; sourceTree = "<group>"; };
 		0C7BA8217CC25DDF7AAB5A29 /* handle_pubrel.c */ = {isa = PBXFileReference; includeInIndex = 1; path = handle_pubrel.c; sourceTree = "<group>"; };
 		0E72147AE915EB068894C0BE /* strings_common.c */ = {isa = PBXFileReference; includeInIndex = 1; path = strings_common.c; sourceTree = "<group>"; };
@@ -70,18 +76,22 @@
 		3668ED198AECD48894C19594 /* handle_connack.c */ = {isa = PBXFileReference; includeInIndex = 1; path = handle_connack.c; sourceTree = "<group>"; };
 		39BB884A149F3848DAF4317A /* handle_pubrec.c */ = {isa = PBXFileReference; includeInIndex = 1; path = handle_pubrec.c; sourceTree = "<group>"; };
 		3B19A9DEA818A570D71C776D /* mqtt_common.c */ = {isa = PBXFileReference; includeInIndex = 1; path = mqtt_common.c; sourceTree = "<group>"; };
+		3C5944269430E770E3FF373A /* net_mosq_ocsp.c */ = {isa = PBXFileReference; includeInIndex = 1; path = net_mosq_ocsp.c; sourceTree = "<group>"; };
 		429729BEFD6EA37856DCD4EA /* packet_datatypes.c */ = {isa = PBXFileReference; includeInIndex = 1; path = packet_datatypes.c; sourceTree = "<group>"; };
 		454547C9CA3EDA20DC1F013A /* thread_mosq.c */ = {isa = PBXFileReference; includeInIndex = 1; path = thread_mosq.c; sourceTree = "<group>"; };
 		464D8BC765FD391F09E06A54 /* send_disconnect.c */ = {isa = PBXFileReference; includeInIndex = 1; path = send_disconnect.c; sourceTree = "<group>"; };
 		4BEC8D503D19EE568E78C733 /* send_connect.c */ = {isa = PBXFileReference; includeInIndex = 1; path = send_connect.c; sourceTree = "<group>"; };
 		4D2A569F01869187C89BA479 /* loop.c */ = {isa = PBXFileReference; includeInIndex = 1; path = loop.c; sourceTree = "<group>"; };
+		5A92ACF0D93AE8A1E4A7B8D8 /* tls_mosq.c */ = {isa = PBXFileReference; includeInIndex = 1; path = tls_mosq.c; sourceTree = "<group>"; };
 		650337D6AFAF5276B1EE7316 /* utf8_common.c */ = {isa = PBXFileReference; includeInIndex = 1; path = utf8_common.c; sourceTree = "<group>"; };
 		657F0DA8BFEEAC4BC6D3E0FA /* actions_publish.c */ = {isa = PBXFileReference; includeInIndex = 1; path = actions_publish.c; sourceTree = "<group>"; };
+		7CAED35E71E69DE6BD9D0A45 /* crypto.xcframework */ = {isa = PBXFileReference; includeInIndex = 1; name = crypto.xcframework; path = ../shared_openssl/crypto.xcframework; sourceTree = SOURCE_ROOT; };
 		7DAB9ABB12F6168172E3E98F /* handle_publish.c */ = {isa = PBXFileReference; includeInIndex = 1; path = handle_publish.c; sourceTree = "<group>"; };
 		83887AF4EA92066BDF7B3097 /* time_common.c */ = {isa = PBXFileReference; includeInIndex = 1; path = time_common.c; sourceTree = "<group>"; };
 		8E415F684CE30EBE293644FD /* callbacks.c */ = {isa = PBXFileReference; includeInIndex = 1; path = callbacks.c; sourceTree = "<group>"; };
 		946901765F755650F1041377 /* send_unsubscribe.c */ = {isa = PBXFileReference; includeInIndex = 1; path = send_unsubscribe.c; sourceTree = "<group>"; };
 		A210592414921BC6045571CB /* send_mosq.c */ = {isa = PBXFileReference; includeInIndex = 1; path = send_mosq.c; sourceTree = "<group>"; };
+		A691C8298312DE978C883981 /* file_common.c */ = {isa = PBXFileReference; includeInIndex = 1; path = file_common.c; sourceTree = "<group>"; };
 		AE14E88F9CEE692BAFC08B3D /* handle_auth.c */ = {isa = PBXFileReference; includeInIndex = 1; path = handle_auth.c; sourceTree = "<group>"; };
 		AE42174022F60F60DE568AEB /* connect.c */ = {isa = PBXFileReference; includeInIndex = 1; path = connect.c; sourceTree = "<group>"; };
 		B5B83621A86C04AE4B1A3F59 /* PluginSolarMQTT.mm */ = {isa = PBXFileReference; includeInIndex = 1; path = PluginSolarMQTT.mm; sourceTree = "<group>"; };
@@ -111,6 +121,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				50A06F6B6548DBF7CAEE782E /* Cocoa.framework in Frameworks */,
+				60AD48505A3F0CFABF4285AD /* ssl.xcframework in Frameworks */,
+				7359D7B145EA66C4E502A2DA /* crypto.xcframework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -137,6 +149,7 @@
 				0E72147AE915EB068894C0BE /* strings_common.c */,
 				83887AF4EA92066BDF7B3097 /* time_common.c */,
 				3B19A9DEA818A570D71C776D /* mqtt_common.c */,
+				A691C8298312DE978C883981 /* file_common.c */,
 			);
 			name = libcommon;
 			path = ../shared_mosquitto/libcommon;
@@ -150,6 +163,8 @@
 				C779AF21708A57BEB1DB23C9 /* shared_mosquitto */,
 				4DF632241D7BB5C99ABB0C57 /* shared_objc_PluginSolarMQTT */,
 				54D8F8855868BEC3D7F7373A /* libcommon */,
+				068129D593303E0776D2EB27 /* ssl.xcframework */,
+				7CAED35E71E69DE6BD9D0A45 /* crypto.xcframework */,
 			);
 			sourceTree = "<group>";
 		};
@@ -208,6 +223,8 @@
 				062C7392989CD5617E6D8411 /* actions_unsubscribe.c */,
 				CF332E210DE4E3F9FFDFAD24 /* options.c */,
 				0C2A39DD4B660164BC9989B6 /* property_mosq.c */,
+				5A92ACF0D93AE8A1E4A7B8D8 /* tls_mosq.c */,
+				3C5944269430E770E3FF373A /* net_mosq_ocsp.c */,
 			);
 			name = shared_mosquitto;
 			path = ../shared_mosquitto;
@@ -330,6 +347,9 @@
 				BE7854C889A0D131A880D1E8 /* time_common.c in Sources */,
 				D8777655AED54DDF09DDD02A /* PluginSolarMQTT.mm in Sources */,
 				DE2E542274AF92E4459CFBC0 /* mqtt_common.c in Sources */,
+				AB5F18BF77C6FA3D1F294DAE /* tls_mosq.c in Sources */,
+				F29292BE2D977655B9897ACB /* net_mosq_ocsp.c in Sources */,
+				54C165D57B7E0D00BA5AEC60 /* file_common.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -417,6 +437,7 @@
 					"\"$(SRCROOT)/../shared_objc_PluginSolarMQTT\"",
 					"\"$(SRCROOT)/../shared_mosquitto/libcommon\"",
 					"\"$(SRCROOT)/../shared_mosquitto/cjson\"",
+					"\"$(SRCROOT)/../shared_openssl/include\"",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.13;
 				OTHER_LDFLAGS = (
@@ -449,6 +470,7 @@
 					"\"$(SRCROOT)/../shared_objc_PluginSolarMQTT\"",
 					"\"$(SRCROOT)/../shared_mosquitto/libcommon\"",
 					"\"$(SRCROOT)/../shared_mosquitto/cjson\"",
+					"\"$(SRCROOT)/../shared_openssl/include\"",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.13;
 				OTHER_LDFLAGS = (
