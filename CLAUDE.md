@@ -104,9 +104,9 @@ SolarMQTT/
 ├── README.md
 ├── patch-solar2d-arm-sim.sh               # Patches Solar2D templates for arm64 simulator
 ├── Corona/                                # Test harness for simulator
-│   ├── main.lua                           # Buttons: Connect, Subscribe, Publish, etc.
+│   ├── main.lua                           # Responsive test UI with tvOS remote support
 │   ├── config.lua                         # 320x480, zoomEven
-│   └── build.settings                     # plugin.solarmqtt, ATS disabled
+│   └── build.settings                     # orientation, plugin.solarmqtt, ATS (iphone+tvos)
 ├── mac/                                   # macOS plugin (dylib)
 │   ├── Plugin.xcodeproj/
 │   └── CoronaNative.xcconfig
@@ -373,11 +373,41 @@ Configurable at top of file: `MQTT_BROKER`, `MQTT_PORT`, `MQTT_PORT_TLS`, `MQTT_
 
 On-screen scrolling event log shows all MQTT events with timestamps. All `addLog()` calls print with `CONSOLE:` prefix to distinguish from native `SolarMQTT:` debug lines.
 
+### Responsive Layout Architecture
+
+All UI positions are derived from `display.actualContentWidth`/`display.actualContentHeight` and `display.screenOriginX`/`Y` (which account for `zoomEven` cropping). No hardcoded pixel positions.
+
+**Layout table `L{}`**: A single table holds all computed metrics (`L.W`, `L.H`, `L.CX`, `L.BUTTON_W`, `L.BUTTON_SPACING`, `L.LOG_ZONE_HEIGHT`, etc.). Recalculated by `recalcLayout()` on orientation change.
+
+**Screen zones** (proportional):
+- **Header zone** (12% of H): title + version text
+- **Button zone** (50-53% of H): 6 rows × 2 columns of buttons + topic info
+- **Log zone** (35-38% of H): scrolling event log with dark background
+
+**`makeButton(label, colIndex, rowIndex, onTap, color)`**: Buttons are created with logical column/row indices (not pixel positions). `buttonDefs[]` stores references to every button's `bg` and `txt` display objects for repositioning during relayout.
+
+**Orientation/resize handling**: `Runtime "orientation"` and `Runtime "resize"` events trigger `doRelayout()` after a 100ms delay (allows Solar2D to update display metrics). The menu is repositioned in-place via `relayoutMenu()`. The test overlay is destroyed and rebuilt via `createTestOverlay()`, preserving test result indicators from `testState.results[]`.
+
+### tvOS / Apple TV Remote Support
+
+Solar2D has no native focus system for tvOS. The test harness implements custom focus-based navigation:
+
+- **`buttonList[]`**: Ordered array of all menu buttons registered by `makeButton()`
+- **`focusRing`**: Yellow highlight `RoundedRect` (no fill, stroke only) that tracks the focused button
+- **`focusMode`**: Either `"menu"` (navigating buttons) or `"overlay"` (Back to Menu button on test results)
+- **`onKeyEvent`**: Listens for `key` events — `buttonA`/`buttonSelect`/`space`/`enter`/`center` for select; `up`/`down`/`left`/`right` for D-pad navigation
+- **Two-column grid navigation**: `up`/`down` skip 2 buttons (one row); `left`/`right` move within a row. Wraps around at edges.
+- **Visual press feedback**: 0.9x scale animation on button select (same pattern as PlatopusDisplay's `register.lua`)
+
+**`build.settings` for tvOS**:
+- `orientation.default = "landscapeRight"` (required — tvOS rejects "Unsupported Orientation" without this)
+- `tvos.plist.NSAppTransportSecurity.NSAllowsArbitraryLoads = true` (for non-TLS test connections)
+
 ### Visual Test Page (v1.2.0+, expanded v1.3.0)
 
 "Run All Tests" switches from the button menu to a full-screen test overlay with traffic light indicators per test. Each test has a pass condition validated by the MQTT event listener.
 
-**v1.3.0**: Expanded from 11 to 20 tests. Tests now cover all MQTT 3.1.1 server acknowledgements individually (CONNACK, SUBACK, PUBACK, UNSUBACK) plus per-operation callback verification. Compact UI with 19px row height and 10px font to fit 20 rows.
+**v1.3.0**: Expanded from 11 to 20 tests. Tests now cover all MQTT 3.1.1 server acknowledgements individually (CONNACK, SUBACK, PUBACK, UNSUBACK) plus per-operation callback verification. Two-column layout in landscape, single column in portrait — all sizing proportional.
 
 | # | Group | Test | Pass condition |
 |---|-------|------|---------------|

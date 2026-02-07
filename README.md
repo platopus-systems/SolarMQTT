@@ -16,6 +16,7 @@ Uses [libmosquitto](https://mosquitto.org/) (the Eclipse Mosquitto C library) on
 - **Username/password authentication**
 - **Async event-driven API** matching Solar2D patterns
 - **Single connection model** -- one MQTT broker connection at a time
+- **Responsive test harness** -- adapts to any screen size and orientation, with tvOS remote navigation
 - All Apple platforms (iOS, tvOS, macOS simulator) and Android
 
 ## Supported Platforms
@@ -509,6 +510,14 @@ bash patch-solar2d-arm-sim.sh
 ```
 
 This must be re-run after reinstalling Solar2D. iOS **device** builds work without any patches.
+
+### tvOS (Apple TV)
+
+tvOS builds work out of the box via CI or Solar2D's device build dialog. The test harness includes:
+
+- Landscape-first responsive layout that adapts to any screen size
+- Apple TV remote (Siri remote) navigation via focus ring and D-pad key events
+- Automatic relayout on orientation change or window resize
 
 ---
 
