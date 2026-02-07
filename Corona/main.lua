@@ -516,8 +516,13 @@ local function createTestOverlay()
     testIndicators = {}
     testLabels = {}
 
-    -- Background
-    local bg = display.newRect(testOverlayGroup, display.contentCenterX, display.contentCenterY, 320, 480)
+    -- Detect landscape vs portrait for layout
+    local isLandscape = display.contentWidth > display.contentHeight
+    local contentW = display.contentWidth
+    local contentH = display.contentHeight
+
+    -- Background (cover full content area)
+    local bg = display.newRect(testOverlayGroup, display.contentCenterX, display.contentCenterY, contentW, contentH)
     bg:setFillColor(0.1, 0.1, 0.15)
 
     -- Title
@@ -540,15 +545,27 @@ local function createTestOverlay()
     })
     ver:setFillColor(0.6, 0.6, 0.6)
 
-    -- Test rows (compact layout for 20 tests)
+    -- Test rows — two-column layout for landscape, single column for portrait
     local startY = 55
     local rowHeight = 19
+    local testsPerCol = isLandscape and math.ceil(#testDefs / 2) or #testDefs
+    local colWidth = isLandscape and (contentW / 2) or contentW
 
     for i, test in ipairs(testDefs) do
-        local y = startY + (i - 1) * rowHeight
+        local col, row
+        if isLandscape then
+            col = (i <= testsPerCol) and 0 or 1
+            row = (i <= testsPerCol) and (i - 1) or (i - testsPerCol - 1)
+        else
+            col = 0
+            row = i - 1
+        end
+
+        local xOffset = col * colWidth
+        local y = startY + row * rowHeight
 
         -- Indicator circle
-        local indicator = display.newCircle(testOverlayGroup, 25, y, 5)
+        local indicator = display.newCircle(testOverlayGroup, xOffset + 25, y, 5)
         local c = STATUS_COLORS.pending
         indicator:setFillColor(c[1], c[2], c[3])
         indicator.strokeWidth = 1
@@ -559,7 +576,7 @@ local function createTestOverlay()
         local label = display.newText({
             parent = testOverlayGroup,
             text = string.format("%2d. %s", i, test.name),
-            x = 40,
+            x = xOffset + 40,
             y = y,
             fontSize = 10,
             font = native.systemFont,
@@ -569,9 +586,9 @@ local function createTestOverlay()
         testLabels[i] = label
     end
 
-    -- Divider line
-    local divY = startY + #testDefs * rowHeight + 5
-    local divider = display.newLine(testOverlayGroup, 20, divY, 300, divY)
+    -- Divider and summary below the test rows
+    local divY = startY + testsPerCol * rowHeight + 5
+    local divider = display.newLine(testOverlayGroup, 20, divY, contentW - 20, divY)
     divider:setStrokeColor(0.4, 0.4, 0.4)
     divider.strokeWidth = 1
 
@@ -926,7 +943,7 @@ local function onKeyEvent(event)
     local keyName = event.keyName
 
     -- Select button (Apple TV remote select, keyboard space/enter)
-    if keyName == "buttonA" or keyName == "space" or keyName == "enter" or keyName == "center" then
+    if keyName == "buttonA" or keyName == "buttonSelect" or keyName == "space" or keyName == "enter" or keyName == "center" then
         if focusMode == "menu" then
             local btn = buttonList[focusIndex]
             if btn then
