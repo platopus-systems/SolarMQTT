@@ -46,10 +46,22 @@ local MQTT_PRIVATE_USER   = "solar2d"
 local MQTT_PRIVATE_PASS   = "solar2d"
 
 -- ============================================================================
--- UI Setup
+-- UI Setup — all positions derived from screen dimensions
 -- ============================================================================
 
 display.setDefault("background", 0.1, 0.1, 0.15)
+
+-- Actual visible area (accounts for zoomEven cropping and orientation)
+-- screenOriginX/Y are negative offsets when content extends beyond config bounds
+local LEFT = display.screenOriginX
+local TOP = display.screenOriginY
+local W = display.actualContentWidth
+local H = display.actualContentHeight
+local CX = display.contentCenterX
+local CY = display.contentCenterY
+local RIGHT = LEFT + W
+local BOTTOM = TOP + H
+local isLandscape = (W > H)
 
 -- Menu group — contains all interactive buttons and log area
 local menuGroup = display.newGroup()
@@ -57,9 +69,9 @@ local menuGroup = display.newGroup()
 local titleText = display.newText({
     parent = menuGroup,
     text = "SolarMQTT Test Harness",
-    x = display.contentCenterX,
-    y = 20,
-    fontSize = 16,
+    x = CX,
+    y = TOP + H * 0.04,
+    fontSize = math.max(10, H * 0.035),
     font = native.systemFontBold,
 })
 titleText:setFillColor(0.3, 0.8, 1)
@@ -67,23 +79,40 @@ titleText:setFillColor(0.3, 0.8, 1)
 local versionText = display.newText({
     parent = menuGroup,
     text = "Plugin v" .. (mqtt.VERSION or "?") .. " build " .. tostring(mqtt.BUILD or "?"),
-    x = display.contentCenterX,
-    y = 38,
-    fontSize = 11,
+    x = CX,
+    y = TOP + H * 0.08,
+    fontSize = math.max(8, H * 0.025),
 })
 versionText:setFillColor(0.6, 0.6, 0.6)
 
+-- Layout constants derived from actual visible area
+local BUTTON_ROWS = 6
+local HEADER_ZONE = H * 0.12         -- space for title + version
+local LOG_ZONE_FRAC = isLandscape and 0.35 or 0.38
+local LOG_ZONE_HEIGHT = H * LOG_ZONE_FRAC
+local BUTTON_ZONE = H - HEADER_ZONE - LOG_ZONE_HEIGHT
+local BUTTON_SPACING = BUTTON_ZONE / (BUTTON_ROWS + 0.5)
+local BUTTON_W = W * 0.42
+local BUTTON_H = math.min(BUTTON_SPACING * 0.8, H * 0.06)
+local BUTTON_FONT = math.max(7, BUTTON_H * 0.45)
+local COL1_X = CX - W * 0.24
+local COL2_X = CX + W * 0.24
+
 -- Log area
 local logLines = {}
-local MAX_LOG_LINES = 12
+local MAX_LOG_LINES = math.max(6, math.floor(LOG_ZONE_HEIGHT / 13) - 1)
 local logGroup = display.newGroup()
 menuGroup:insert(logGroup)
-logGroup.y = 300
+local logTop = BOTTOM - LOG_ZONE_HEIGHT
+logGroup.y = logTop
 
-local logBg = display.newRect(logGroup, display.contentCenterX, 80, 300, 170)
+local logBg = display.newRect(logGroup, CX, LOG_ZONE_HEIGHT * 0.5, W * 0.92, LOG_ZONE_HEIGHT - 10)
 logBg:setFillColor(0, 0, 0, 0.5)
 logBg.strokeWidth = 1
 logBg:setStrokeColor(0.3, 0.3, 0.3)
+
+local LOG_LINE_HEIGHT = math.max(10, (LOG_ZONE_HEIGHT - 20) / MAX_LOG_LINES)
+local LOG_FONT = math.max(7, LOG_LINE_HEIGHT * 0.7)
 
 local function addLog(msg)
     print("CONSOLE: " .. msg)
@@ -102,9 +131,9 @@ local function addLog(msg)
         local t = display.newText({
             parent = logGroup,
             text = line,
-            x = 15,
-            y = 5 + i * 13,
-            fontSize = 9,
+            x = LEFT + W * 0.06,
+            y = 5 + i * LOG_LINE_HEIGHT,
+            fontSize = LOG_FONT,
             font = native.systemFont,
             align = "left",
         })
@@ -516,40 +545,41 @@ local function createTestOverlay()
     testIndicators = {}
     testLabels = {}
 
-    -- Detect landscape vs portrait for layout
-    local isLandscape = display.contentWidth > display.contentHeight
-    local contentW = display.contentWidth
-    local contentH = display.contentHeight
-
-    -- Background (cover full content area)
-    local bg = display.newRect(testOverlayGroup, display.contentCenterX, display.contentCenterY, contentW, contentH)
+    -- Background (cover full visible area)
+    local bg = display.newRect(testOverlayGroup, CX, CY, W + 10, H + 10)
     bg:setFillColor(0.1, 0.1, 0.15)
 
     -- Title
+    local titleFontSize = math.max(10, H * 0.035)
     local title = display.newText({
         parent = testOverlayGroup,
         text = "SolarMQTT Test Results",
-        x = display.contentCenterX,
-        y = 20,
-        fontSize = 14,
+        x = CX,
+        y = TOP + H * 0.04,
+        fontSize = titleFontSize,
         font = native.systemFontBold,
     })
     title:setFillColor(0.3, 0.8, 1)
 
+    local verFontSize = math.max(8, H * 0.025)
     local ver = display.newText({
         parent = testOverlayGroup,
         text = "v" .. (mqtt.VERSION or "?") .. " build " .. tostring(mqtt.BUILD or "?"),
-        x = display.contentCenterX,
-        y = 35,
-        fontSize = 10,
+        x = CX,
+        y = TOP + H * 0.08,
+        fontSize = verFontSize,
     })
     ver:setFillColor(0.6, 0.6, 0.6)
 
     -- Test rows — two-column layout for landscape, single column for portrait
-    local startY = 55
-    local rowHeight = 19
+    local startY = TOP + H * 0.13
+    local footerSpace = H * 0.18     -- space for divider + summary + back button
     local testsPerCol = isLandscape and math.ceil(#testDefs / 2) or #testDefs
-    local colWidth = isLandscape and (contentW / 2) or contentW
+    local availableH = H - (startY - TOP) - footerSpace
+    local rowHeight = math.min(availableH / testsPerCol, H * 0.06)
+    local colWidth = isLandscape and (W / 2) or W
+    local indicatorR = math.max(3, rowHeight * 0.22)
+    local testFontSize = math.max(7, rowHeight * 0.5)
 
     for i, test in ipairs(testDefs) do
         local col, row
@@ -561,11 +591,11 @@ local function createTestOverlay()
             row = i - 1
         end
 
-        local xOffset = col * colWidth
+        local xOffset = LEFT + col * colWidth
         local y = startY + row * rowHeight
 
         -- Indicator circle
-        local indicator = display.newCircle(testOverlayGroup, xOffset + 25, y, 5)
+        local indicator = display.newCircle(testOverlayGroup, xOffset + W * 0.06, y, indicatorR)
         local c = STATUS_COLORS.pending
         indicator:setFillColor(c[1], c[2], c[3])
         indicator.strokeWidth = 1
@@ -576,9 +606,9 @@ local function createTestOverlay()
         local label = display.newText({
             parent = testOverlayGroup,
             text = string.format("%2d. %s", i, test.name),
-            x = xOffset + 40,
+            x = xOffset + W * 0.10,
             y = y,
-            fontSize = 10,
+            fontSize = testFontSize,
             font = native.systemFont,
         })
         label.anchorX = 0
@@ -587,25 +617,28 @@ local function createTestOverlay()
     end
 
     -- Divider and summary below the test rows
-    local divY = startY + testsPerCol * rowHeight + 5
-    local divider = display.newLine(testOverlayGroup, 20, divY, contentW - 20, divY)
+    local divY = startY + testsPerCol * rowHeight + H * 0.02
+    local divider = display.newLine(testOverlayGroup, LEFT + W * 0.05, divY, RIGHT - W * 0.05, divY)
     divider:setStrokeColor(0.4, 0.4, 0.4)
     divider.strokeWidth = 1
 
     -- Summary text
+    local summaryFontSize = math.max(9, H * 0.032)
     summaryText = display.newText({
         parent = testOverlayGroup,
         text = "Running...",
-        x = display.contentCenterX,
-        y = divY + 15,
-        fontSize = 13,
+        x = CX,
+        y = divY + H * 0.04,
+        fontSize = summaryFontSize,
         font = native.systemFontBold,
     })
     summaryText:setFillColor(0.6, 0.6, 0.6)
 
     -- Back button
-    local backY = divY + 42
-    local backBg = display.newRoundedRect(testOverlayGroup, display.contentCenterX, backY, 160, 28, 6)
+    local backBtnW = W * 0.4
+    local backBtnH = math.max(20, H * 0.06)
+    local backY = divY + H * 0.10
+    local backBg = display.newRoundedRect(testOverlayGroup, CX, backY, backBtnW, backBtnH, 6)
     backBg:setFillColor(0.3, 0.3, 0.4)
     backBg.strokeWidth = 1
     backBg:setStrokeColor(0.5, 0.5, 0.6)
@@ -613,9 +646,9 @@ local function createTestOverlay()
     local backTxt = display.newText({
         parent = testOverlayGroup,
         text = "Back to Menu",
-        x = display.contentCenterX,
+        x = CX,
         y = backY,
-        fontSize = 11,
+        fontSize = math.max(8, backBtnH * 0.42),
         font = native.systemFontBold,
     })
     backTxt:setFillColor(0.8, 0.8, 0.9)
@@ -739,13 +772,10 @@ addLog("v" .. (mqtt.VERSION or "?") .. " build " .. tostring(mqtt.BUILD or "?"))
 -- Buttons + Focus Navigation (tvOS Apple TV remote support)
 -- ============================================================================
 
-local buttonY = 55
-local buttonSpacing = 26
-local buttonW = 140
-local buttonH = 22
+local buttonY = TOP + HEADER_ZONE + BUTTON_SPACING * 0.5
 
 local function makeButton(label, x, y, onTap, color)
-    local bg = display.newRoundedRect(menuGroup, x, y, buttonW, buttonH, 4)
+    local bg = display.newRoundedRect(menuGroup, x, y, BUTTON_W, BUTTON_H, 4)
     local r, g, b = 0.2, 0.5, 0.8
     if color == "green" then r, g, b = 0.2, 0.7, 0.3
     elseif color == "red" then r, g, b = 0.8, 0.3, 0.2
@@ -759,7 +789,7 @@ local function makeButton(label, x, y, onTap, color)
         text = label,
         x = x,
         y = y,
-        fontSize = 10,
+        fontSize = BUTTON_FONT,
         font = native.systemFontBold,
     })
 
@@ -770,17 +800,14 @@ local function makeButton(label, x, y, onTap, color)
     end)
 
     -- Register for focus navigation
-    local col = (x < display.contentCenterX) and 1 or 2
+    local col = (x < CX) and 1 or 2
     buttonList[#buttonList + 1] = { bg = bg, label = label, onTap = onTap, col = col }
 
     return bg, txt
 end
 
-local col1 = display.contentCenterX - 78
-local col2 = display.contentCenterX + 78
-
 -- Row 1: Connect (non-TLS) / Disconnect
-makeButton("Connect", col1, buttonY, function()
+makeButton("Connect", COL1_X, buttonY, function()
     mqtt.connect({
         broker = MQTT_BROKER,
         port = MQTT_PORT,
@@ -790,33 +817,33 @@ makeButton("Connect", col1, buttonY, function()
     })
 end)
 
-makeButton("Disconnect", col2, buttonY, function()
+makeButton("Disconnect", COL2_X, buttonY, function()
     mqtt.disconnect()
 end)
 
 -- Row 2: Subscribe / Unsubscribe
-buttonY = buttonY + buttonSpacing
-makeButton("Subscribe", col1, buttonY, function()
+buttonY = buttonY + BUTTON_SPACING
+makeButton("Subscribe", COL1_X, buttonY, function()
     mqtt.subscribe(MQTT_TOPIC, 1)
 end)
 
-makeButton("Unsubscribe", col2, buttonY, function()
+makeButton("Unsubscribe", COL2_X, buttonY, function()
     mqtt.unsubscribe(MQTT_TOPIC)
 end)
 
 -- Row 3: Publish QoS 0 / Publish QoS 1
-buttonY = buttonY + buttonSpacing
-makeButton("Publish QoS 0", col1, buttonY, function()
+buttonY = buttonY + BUTTON_SPACING
+makeButton("Publish QoS 0", COL1_X, buttonY, function()
     mqtt.publish(MQTT_TOPIC, "Hello " .. os.time())
 end)
 
-makeButton("Publish QoS 1", col2, buttonY, function()
+makeButton("Publish QoS 1", COL2_X, buttonY, function()
     mqtt.publish(MQTT_TOPIC, "QoS1 " .. os.time(), { qos = 1 })
 end)
 
 -- Row 4: Bad Host / Sub+Pub round-trip (non-TLS)
-buttonY = buttonY + buttonSpacing
-makeButton("Bad Host", col1, buttonY, function()
+buttonY = buttonY + BUTTON_SPACING
+makeButton("Bad Host", COL1_X, buttonY, function()
     mqtt.connect({
         broker = MQTT_BAD_HOST,
         port = 1883,
@@ -826,7 +853,7 @@ makeButton("Bad Host", col1, buttonY, function()
     })
 end, "red")
 
-makeButton("Sub+Pub Test", col2, buttonY, function()
+makeButton("Sub+Pub Test", COL2_X, buttonY, function()
     mqtt.connect({
         broker = MQTT_BROKER,
         port = MQTT_PORT,
@@ -843,8 +870,8 @@ makeButton("Sub+Pub Test", col2, buttonY, function()
 end)
 
 -- Row 5: TLS Connect / TLS Sub+Pub
-buttonY = buttonY + buttonSpacing
-makeButton("TLS Connect", col1, buttonY, function()
+buttonY = buttonY + BUTTON_SPACING
+makeButton("TLS Connect", COL1_X, buttonY, function()
     mqtt.connect({
         broker = MQTT_BROKER,
         port = MQTT_PORT_TLS,
@@ -854,7 +881,7 @@ makeButton("TLS Connect", col1, buttonY, function()
     })
 end)
 
-makeButton("TLS Sub+Pub", col2, buttonY, function()
+makeButton("TLS Sub+Pub", COL2_X, buttonY, function()
     mqtt.connect({
         broker = MQTT_BROKER,
         port = MQTT_PORT_TLS,
@@ -871,8 +898,8 @@ makeButton("TLS Sub+Pub", col2, buttonY, function()
 end)
 
 -- Row 6: TLS Bad Auth / Run All Tests
-buttonY = buttonY + buttonSpacing
-makeButton("TLS Bad Auth", col1, buttonY, function()
+buttonY = buttonY + BUTTON_SPACING
+makeButton("TLS Bad Auth", COL1_X, buttonY, function()
     mqtt.connect({
         broker = MQTT_PRIVATE_BROKER,
         port = MQTT_PRIVATE_PORT,
@@ -884,16 +911,16 @@ makeButton("TLS Bad Auth", col1, buttonY, function()
     })
 end, "red")
 
-makeButton("Run All Tests", col2, buttonY, startTestSuite, "green")
+makeButton("Run All Tests", COL2_X, buttonY, startTestSuite, "green")
 
 -- Topic info
-buttonY = buttonY + buttonSpacing + 5
+buttonY = buttonY + BUTTON_SPACING
 local topicInfo = display.newText({
     parent = menuGroup,
     text = "Topic: " .. MQTT_TOPIC,
-    x = display.contentCenterX,
+    x = CX,
     y = buttonY,
-    fontSize = 9,
+    fontSize = math.max(7, BUTTON_FONT * 0.85),
     font = native.systemFont,
 })
 topicInfo:setFillColor(0.5, 0.5, 0.5)
@@ -903,7 +930,7 @@ topicInfo:setFillColor(0.5, 0.5, 0.5)
 -- ============================================================================
 
 -- Create focus ring (bright border, no fill)
-focusRing = display.newRoundedRect(menuGroup, 0, 0, buttonW + 6, buttonH + 6, 6)
+focusRing = display.newRoundedRect(menuGroup, 0, 0, BUTTON_W + 6, BUTTON_H + 6, 6)
 focusRing:setFillColor(0, 0, 0, 0)
 focusRing.strokeWidth = 2
 focusRing:setStrokeColor(1, 1, 0.3)
@@ -914,15 +941,15 @@ updateFocusRing = function()
         if btn and btn.bg then
             focusRing.x = btn.bg.x
             focusRing.y = btn.bg.y
-            focusRing.width = buttonW + 6
-            focusRing.height = buttonH + 6
+            focusRing.width = BUTTON_W + 6
+            focusRing.height = BUTTON_H + 6
             focusRing.isVisible = menuGroup.isVisible
         end
     elseif focusMode == "overlay" and overlayBackButton then
         focusRing.x = overlayBackButton.x
         focusRing.y = overlayBackButton.y
-        focusRing.width = 166
-        focusRing.height = 34
+        focusRing.width = overlayBackButton.width + 6
+        focusRing.height = overlayBackButton.height + 6
         focusRing.isVisible = true
     end
 end
