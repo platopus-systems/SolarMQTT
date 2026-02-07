@@ -51,17 +51,37 @@ local MQTT_PRIVATE_PASS   = "solar2d"
 
 display.setDefault("background", 0.1, 0.1, 0.15)
 
--- Actual visible area (accounts for zoomEven cropping and orientation)
--- screenOriginX/Y are negative offsets when content extends beyond config bounds
-local LEFT = display.screenOriginX
-local TOP = display.screenOriginY
-local W = display.actualContentWidth
-local H = display.actualContentHeight
-local CX = display.contentCenterX
-local CY = display.contentCenterY
-local RIGHT = LEFT + W
-local BOTTOM = TOP + H
-local isLandscape = (W > H)
+-- Layout metrics — recalculated on orientation change
+local L = {}   -- layout table: holds all computed metrics
+
+local function recalcLayout()
+    L.LEFT = display.screenOriginX
+    L.TOP = display.screenOriginY
+    L.W = display.actualContentWidth
+    L.H = display.actualContentHeight
+    L.CX = display.contentCenterX
+    L.CY = display.contentCenterY
+    L.RIGHT = L.LEFT + L.W
+    L.BOTTOM = L.TOP + L.H
+    L.isLandscape = (L.W > L.H)
+
+    local BUTTON_ROWS = 6
+    L.HEADER_ZONE = L.H * 0.12
+    local logFrac = L.isLandscape and 0.35 or 0.38
+    L.LOG_ZONE_HEIGHT = L.H * logFrac
+    local buttonZone = L.H - L.HEADER_ZONE - L.LOG_ZONE_HEIGHT
+    L.BUTTON_SPACING = buttonZone / (BUTTON_ROWS + 0.5)
+    L.BUTTON_W = L.W * 0.42
+    L.BUTTON_H = math.min(L.BUTTON_SPACING * 0.8, L.H * 0.06)
+    L.BUTTON_FONT = math.max(7, L.BUTTON_H * 0.45)
+    L.COL1_X = L.CX - L.W * 0.24
+    L.COL2_X = L.CX + L.W * 0.24
+    L.MAX_LOG_LINES = math.max(6, math.floor(L.LOG_ZONE_HEIGHT / 13) - 1)
+    L.LOG_LINE_HEIGHT = math.max(10, (L.LOG_ZONE_HEIGHT - 20) / L.MAX_LOG_LINES)
+    L.LOG_FONT = math.max(7, L.LOG_LINE_HEIGHT * 0.7)
+end
+
+recalcLayout()  -- initial calculation
 
 -- Menu group — contains all interactive buttons and log area
 local menuGroup = display.newGroup()
@@ -69,9 +89,9 @@ local menuGroup = display.newGroup()
 local titleText = display.newText({
     parent = menuGroup,
     text = "SolarMQTT Test Harness",
-    x = CX,
-    y = TOP + H * 0.04,
-    fontSize = math.max(10, H * 0.035),
+    x = L.CX,
+    y = L.TOP + L.H * 0.04,
+    fontSize = math.max(10, L.H * 0.035),
     font = native.systemFontBold,
 })
 titleText:setFillColor(0.3, 0.8, 1)
@@ -79,61 +99,44 @@ titleText:setFillColor(0.3, 0.8, 1)
 local versionText = display.newText({
     parent = menuGroup,
     text = "Plugin v" .. (mqtt.VERSION or "?") .. " build " .. tostring(mqtt.BUILD or "?"),
-    x = CX,
-    y = TOP + H * 0.08,
-    fontSize = math.max(8, H * 0.025),
+    x = L.CX,
+    y = L.TOP + L.H * 0.08,
+    fontSize = math.max(8, L.H * 0.025),
 })
 versionText:setFillColor(0.6, 0.6, 0.6)
 
--- Layout constants derived from actual visible area
-local BUTTON_ROWS = 6
-local HEADER_ZONE = H * 0.12         -- space for title + version
-local LOG_ZONE_FRAC = isLandscape and 0.35 or 0.38
-local LOG_ZONE_HEIGHT = H * LOG_ZONE_FRAC
-local BUTTON_ZONE = H - HEADER_ZONE - LOG_ZONE_HEIGHT
-local BUTTON_SPACING = BUTTON_ZONE / (BUTTON_ROWS + 0.5)
-local BUTTON_W = W * 0.42
-local BUTTON_H = math.min(BUTTON_SPACING * 0.8, H * 0.06)
-local BUTTON_FONT = math.max(7, BUTTON_H * 0.45)
-local COL1_X = CX - W * 0.24
-local COL2_X = CX + W * 0.24
-
 -- Log area
 local logLines = {}
-local MAX_LOG_LINES = math.max(6, math.floor(LOG_ZONE_HEIGHT / 13) - 1)
 local logGroup = display.newGroup()
 menuGroup:insert(logGroup)
-local logTop = BOTTOM - LOG_ZONE_HEIGHT
-logGroup.y = logTop
+logGroup.y = L.BOTTOM - L.LOG_ZONE_HEIGHT
 
-local logBg = display.newRect(logGroup, CX, LOG_ZONE_HEIGHT * 0.5, W * 0.92, LOG_ZONE_HEIGHT - 10)
+local logBg = display.newRect(logGroup, L.CX, L.LOG_ZONE_HEIGHT * 0.5, L.W * 0.92, L.LOG_ZONE_HEIGHT - 10)
 logBg:setFillColor(0, 0, 0, 0.5)
 logBg.strokeWidth = 1
 logBg:setStrokeColor(0.3, 0.3, 0.3)
 
-local LOG_LINE_HEIGHT = math.max(10, (LOG_ZONE_HEIGHT - 20) / MAX_LOG_LINES)
-local LOG_FONT = math.max(7, LOG_LINE_HEIGHT * 0.7)
-
-local function addLog(msg)
-    print("CONSOLE: " .. msg)
-    table.insert(logLines, os.date("%H:%M:%S") .. " " .. msg)
-    while #logLines > MAX_LOG_LINES do
-        table.remove(logLines, 1)
-    end
-
+local function refreshLogDisplay()
     for i = logGroup.numChildren, 1, -1 do
         if logGroup[i].isLogLine then
             logGroup[i]:removeSelf()
         end
     end
 
-    for i, line in ipairs(logLines) do
+    -- Only show as many lines as fit
+    local visibleLines = {}
+    local start = math.max(1, #logLines - L.MAX_LOG_LINES + 1)
+    for i = start, #logLines do
+        visibleLines[#visibleLines + 1] = logLines[i]
+    end
+
+    for i, line in ipairs(visibleLines) do
         local t = display.newText({
             parent = logGroup,
             text = line,
-            x = LEFT + W * 0.06,
-            y = 5 + i * LOG_LINE_HEIGHT,
-            fontSize = LOG_FONT,
+            x = L.LEFT + L.W * 0.06,
+            y = 5 + i * L.LOG_LINE_HEIGHT,
+            fontSize = L.LOG_FONT,
             font = native.systemFont,
             align = "left",
         })
@@ -141,6 +144,16 @@ local function addLog(msg)
         t:setFillColor(0.8, 1, 0.8)
         t.isLogLine = true
     end
+end
+
+local function addLog(msg)
+    print("CONSOLE: " .. msg)
+    table.insert(logLines, os.date("%H:%M:%S") .. " " .. msg)
+    -- Cap total stored lines (keep more than visible for orientation changes)
+    while #logLines > 100 do
+        table.remove(logLines, 1)
+    end
+    refreshLogDisplay()
 end
 
 -- ============================================================================
@@ -546,44 +559,44 @@ local function createTestOverlay()
     testLabels = {}
 
     -- Background (cover full visible area)
-    local bg = display.newRect(testOverlayGroup, CX, CY, W + 10, H + 10)
+    local bg = display.newRect(testOverlayGroup, L.CX, L.CY, L.W + 10, L.H + 10)
     bg:setFillColor(0.1, 0.1, 0.15)
 
     -- Title
-    local titleFontSize = math.max(10, H * 0.035)
+    local titleFontSize = math.max(10, L.H * 0.035)
     local title = display.newText({
         parent = testOverlayGroup,
         text = "SolarMQTT Test Results",
-        x = CX,
-        y = TOP + H * 0.04,
+        x = L.CX,
+        y = L.TOP + L.H * 0.04,
         fontSize = titleFontSize,
         font = native.systemFontBold,
     })
     title:setFillColor(0.3, 0.8, 1)
 
-    local verFontSize = math.max(8, H * 0.025)
+    local verFontSize = math.max(8, L.H * 0.025)
     local ver = display.newText({
         parent = testOverlayGroup,
         text = "v" .. (mqtt.VERSION or "?") .. " build " .. tostring(mqtt.BUILD or "?"),
-        x = CX,
-        y = TOP + H * 0.08,
+        x = L.CX,
+        y = L.TOP + L.H * 0.08,
         fontSize = verFontSize,
     })
     ver:setFillColor(0.6, 0.6, 0.6)
 
     -- Test rows — two-column layout for landscape, single column for portrait
-    local startY = TOP + H * 0.13
-    local footerSpace = H * 0.18     -- space for divider + summary + back button
-    local testsPerCol = isLandscape and math.ceil(#testDefs / 2) or #testDefs
-    local availableH = H - (startY - TOP) - footerSpace
-    local rowHeight = math.min(availableH / testsPerCol, H * 0.06)
-    local colWidth = isLandscape and (W / 2) or W
+    local startY = L.TOP + L.H * 0.13
+    local footerSpace = L.H * 0.18
+    local testsPerCol = L.isLandscape and math.ceil(#testDefs / 2) or #testDefs
+    local availableH = L.H - (startY - L.TOP) - footerSpace
+    local rowHeight = math.min(availableH / testsPerCol, L.H * 0.06)
+    local colWidth = L.isLandscape and (L.W / 2) or L.W
     local indicatorR = math.max(3, rowHeight * 0.22)
     local testFontSize = math.max(7, rowHeight * 0.5)
 
     for i, test in ipairs(testDefs) do
         local col, row
-        if isLandscape then
+        if L.isLandscape then
             col = (i <= testsPerCol) and 0 or 1
             row = (i <= testsPerCol) and (i - 1) or (i - testsPerCol - 1)
         else
@@ -591,22 +604,28 @@ local function createTestOverlay()
             row = i - 1
         end
 
-        local xOffset = LEFT + col * colWidth
+        local xOffset = L.LEFT + col * colWidth
         local y = startY + row * rowHeight
 
         -- Indicator circle
-        local indicator = display.newCircle(testOverlayGroup, xOffset + W * 0.06, y, indicatorR)
+        local indicator = display.newCircle(testOverlayGroup, xOffset + L.W * 0.06, y, indicatorR)
         local c = STATUS_COLORS.pending
         indicator:setFillColor(c[1], c[2], c[3])
         indicator.strokeWidth = 1
         indicator:setStrokeColor(0.3, 0.3, 0.3)
         testIndicators[i] = indicator
 
+        -- Restore saved result colour if we have one (rotation during/after tests)
+        if testState.results[i] then
+            local sc = STATUS_COLORS[testState.results[i]] or STATUS_COLORS.pending
+            indicator:setFillColor(sc[1], sc[2], sc[3])
+        end
+
         -- Test label
         local label = display.newText({
             parent = testOverlayGroup,
             text = string.format("%2d. %s", i, test.name),
-            x = xOffset + W * 0.10,
+            x = xOffset + L.W * 0.10,
             y = y,
             fontSize = testFontSize,
             font = native.systemFont,
@@ -617,28 +636,28 @@ local function createTestOverlay()
     end
 
     -- Divider and summary below the test rows
-    local divY = startY + testsPerCol * rowHeight + H * 0.02
-    local divider = display.newLine(testOverlayGroup, LEFT + W * 0.05, divY, RIGHT - W * 0.05, divY)
+    local divY = startY + testsPerCol * rowHeight + L.H * 0.02
+    local divider = display.newLine(testOverlayGroup, L.LEFT + L.W * 0.05, divY, L.RIGHT - L.W * 0.05, divY)
     divider:setStrokeColor(0.4, 0.4, 0.4)
     divider.strokeWidth = 1
 
     -- Summary text
-    local summaryFontSize = math.max(9, H * 0.032)
+    local summaryFontSize = math.max(9, L.H * 0.032)
     summaryText = display.newText({
         parent = testOverlayGroup,
         text = "Running...",
-        x = CX,
-        y = divY + H * 0.04,
+        x = L.CX,
+        y = divY + L.H * 0.04,
         fontSize = summaryFontSize,
         font = native.systemFontBold,
     })
     summaryText:setFillColor(0.6, 0.6, 0.6)
 
     -- Back button
-    local backBtnW = W * 0.4
-    local backBtnH = math.max(20, H * 0.06)
-    local backY = divY + H * 0.10
-    local backBg = display.newRoundedRect(testOverlayGroup, CX, backY, backBtnW, backBtnH, 6)
+    local backBtnW = L.W * 0.4
+    local backBtnH = math.max(20, L.H * 0.06)
+    local backY = divY + L.H * 0.10
+    local backBg = display.newRoundedRect(testOverlayGroup, L.CX, backY, backBtnW, backBtnH, 6)
     backBg:setFillColor(0.3, 0.3, 0.4)
     backBg.strokeWidth = 1
     backBg:setStrokeColor(0.5, 0.5, 0.6)
@@ -646,7 +665,7 @@ local function createTestOverlay()
     local backTxt = display.newText({
         parent = testOverlayGroup,
         text = "Back to Menu",
-        x = CX,
+        x = L.CX,
         y = backY,
         fontSize = math.max(8, backBtnH * 0.42),
         font = native.systemFontBold,
@@ -772,10 +791,14 @@ addLog("v" .. (mqtt.VERSION or "?") .. " build " .. tostring(mqtt.BUILD or "?"))
 -- Buttons + Focus Navigation (tvOS Apple TV remote support)
 -- ============================================================================
 
-local buttonY = TOP + HEADER_ZONE + BUTTON_SPACING * 0.5
+-- Store button definitions for relayout: { label, colIndex (1 or 2), onTap, color, bg, txt }
+local buttonDefs = {}
+local topicInfo  -- forward declaration
 
-local function makeButton(label, x, y, onTap, color)
-    local bg = display.newRoundedRect(menuGroup, x, y, BUTTON_W, BUTTON_H, 4)
+local function makeButton(label, colIndex, rowIndex, onTap, color)
+    local x = (colIndex == 1) and L.COL1_X or L.COL2_X
+    local y = L.TOP + L.HEADER_ZONE + L.BUTTON_SPACING * (rowIndex - 0.5)
+    local bg = display.newRoundedRect(menuGroup, x, y, L.BUTTON_W, L.BUTTON_H, 4)
     local r, g, b = 0.2, 0.5, 0.8
     if color == "green" then r, g, b = 0.2, 0.7, 0.3
     elseif color == "red" then r, g, b = 0.8, 0.3, 0.2
@@ -789,7 +812,7 @@ local function makeButton(label, x, y, onTap, color)
         text = label,
         x = x,
         y = y,
-        fontSize = BUTTON_FONT,
+        fontSize = L.BUTTON_FONT,
         font = native.systemFontBold,
     })
 
@@ -800,14 +823,17 @@ local function makeButton(label, x, y, onTap, color)
     end)
 
     -- Register for focus navigation
-    local col = (x < CX) and 1 or 2
+    local col = (colIndex == 1) and 1 or 2
     buttonList[#buttonList + 1] = { bg = bg, label = label, onTap = onTap, col = col }
+
+    -- Store for relayout
+    buttonDefs[#buttonDefs + 1] = { label = label, colIndex = colIndex, rowIndex = rowIndex, onTap = onTap, color = color, bg = bg, txt = txt }
 
     return bg, txt
 end
 
 -- Row 1: Connect (non-TLS) / Disconnect
-makeButton("Connect", COL1_X, buttonY, function()
+makeButton("Connect", 1, 1, function()
     mqtt.connect({
         broker = MQTT_BROKER,
         port = MQTT_PORT,
@@ -817,33 +843,30 @@ makeButton("Connect", COL1_X, buttonY, function()
     })
 end)
 
-makeButton("Disconnect", COL2_X, buttonY, function()
+makeButton("Disconnect", 2, 1, function()
     mqtt.disconnect()
 end)
 
 -- Row 2: Subscribe / Unsubscribe
-buttonY = buttonY + BUTTON_SPACING
-makeButton("Subscribe", COL1_X, buttonY, function()
+makeButton("Subscribe", 1, 2, function()
     mqtt.subscribe(MQTT_TOPIC, 1)
 end)
 
-makeButton("Unsubscribe", COL2_X, buttonY, function()
+makeButton("Unsubscribe", 2, 2, function()
     mqtt.unsubscribe(MQTT_TOPIC)
 end)
 
 -- Row 3: Publish QoS 0 / Publish QoS 1
-buttonY = buttonY + BUTTON_SPACING
-makeButton("Publish QoS 0", COL1_X, buttonY, function()
+makeButton("Publish QoS 0", 1, 3, function()
     mqtt.publish(MQTT_TOPIC, "Hello " .. os.time())
 end)
 
-makeButton("Publish QoS 1", COL2_X, buttonY, function()
+makeButton("Publish QoS 1", 2, 3, function()
     mqtt.publish(MQTT_TOPIC, "QoS1 " .. os.time(), { qos = 1 })
 end)
 
 -- Row 4: Bad Host / Sub+Pub round-trip (non-TLS)
-buttonY = buttonY + BUTTON_SPACING
-makeButton("Bad Host", COL1_X, buttonY, function()
+makeButton("Bad Host", 1, 4, function()
     mqtt.connect({
         broker = MQTT_BAD_HOST,
         port = 1883,
@@ -853,7 +876,7 @@ makeButton("Bad Host", COL1_X, buttonY, function()
     })
 end, "red")
 
-makeButton("Sub+Pub Test", COL2_X, buttonY, function()
+makeButton("Sub+Pub Test", 2, 4, function()
     mqtt.connect({
         broker = MQTT_BROKER,
         port = MQTT_PORT,
@@ -870,8 +893,7 @@ makeButton("Sub+Pub Test", COL2_X, buttonY, function()
 end)
 
 -- Row 5: TLS Connect / TLS Sub+Pub
-buttonY = buttonY + BUTTON_SPACING
-makeButton("TLS Connect", COL1_X, buttonY, function()
+makeButton("TLS Connect", 1, 5, function()
     mqtt.connect({
         broker = MQTT_BROKER,
         port = MQTT_PORT_TLS,
@@ -881,7 +903,7 @@ makeButton("TLS Connect", COL1_X, buttonY, function()
     })
 end)
 
-makeButton("TLS Sub+Pub", COL2_X, buttonY, function()
+makeButton("TLS Sub+Pub", 2, 5, function()
     mqtt.connect({
         broker = MQTT_BROKER,
         port = MQTT_PORT_TLS,
@@ -898,8 +920,7 @@ makeButton("TLS Sub+Pub", COL2_X, buttonY, function()
 end)
 
 -- Row 6: TLS Bad Auth / Run All Tests
-buttonY = buttonY + BUTTON_SPACING
-makeButton("TLS Bad Auth", COL1_X, buttonY, function()
+makeButton("TLS Bad Auth", 1, 6, function()
     mqtt.connect({
         broker = MQTT_PRIVATE_BROKER,
         port = MQTT_PRIVATE_PORT,
@@ -911,16 +932,15 @@ makeButton("TLS Bad Auth", COL1_X, buttonY, function()
     })
 end, "red")
 
-makeButton("Run All Tests", COL2_X, buttonY, startTestSuite, "green")
+makeButton("Run All Tests", 2, 6, startTestSuite, "green")
 
 -- Topic info
-buttonY = buttonY + BUTTON_SPACING
-local topicInfo = display.newText({
+topicInfo = display.newText({
     parent = menuGroup,
     text = "Topic: " .. MQTT_TOPIC,
-    x = CX,
-    y = buttonY,
-    fontSize = math.max(7, BUTTON_FONT * 0.85),
+    x = L.CX,
+    y = L.TOP + L.HEADER_ZONE + L.BUTTON_SPACING * 6.5,
+    fontSize = math.max(7, L.BUTTON_FONT * 0.85),
     font = native.systemFont,
 })
 topicInfo:setFillColor(0.5, 0.5, 0.5)
@@ -930,7 +950,7 @@ topicInfo:setFillColor(0.5, 0.5, 0.5)
 -- ============================================================================
 
 -- Create focus ring (bright border, no fill)
-focusRing = display.newRoundedRect(menuGroup, 0, 0, BUTTON_W + 6, BUTTON_H + 6, 6)
+focusRing = display.newRoundedRect(menuGroup, 0, 0, L.BUTTON_W + 6, L.BUTTON_H + 6, 6)
 focusRing:setFillColor(0, 0, 0, 0)
 focusRing.strokeWidth = 2
 focusRing:setStrokeColor(1, 1, 0.3)
@@ -941,8 +961,8 @@ updateFocusRing = function()
         if btn and btn.bg then
             focusRing.x = btn.bg.x
             focusRing.y = btn.bg.y
-            focusRing.width = BUTTON_W + 6
-            focusRing.height = BUTTON_H + 6
+            focusRing.width = L.BUTTON_W + 6
+            focusRing.height = L.BUTTON_H + 6
             focusRing.isVisible = menuGroup.isVisible
         end
     elseif focusMode == "overlay" and overlayBackButton then
@@ -1026,5 +1046,84 @@ local function onKeyEvent(event)
 end
 
 Runtime:addEventListener("key", onKeyEvent)
+
+-- ============================================================================
+-- Orientation Change Handler — relayout everything on rotation
+-- ============================================================================
+
+local function relayoutMenu()
+    -- Reposition title + version
+    titleText.x = L.CX
+    titleText.y = L.TOP + L.H * 0.04
+    titleText.size = math.max(10, L.H * 0.035)
+
+    versionText.x = L.CX
+    versionText.y = L.TOP + L.H * 0.08
+    versionText.size = math.max(8, L.H * 0.025)
+
+    -- Reposition log area
+    logGroup.y = L.BOTTOM - L.LOG_ZONE_HEIGHT
+    logBg.x = L.CX
+    logBg.y = L.LOG_ZONE_HEIGHT * 0.5
+    logBg.width = L.W * 0.92
+    logBg.height = L.LOG_ZONE_HEIGHT - 10
+    refreshLogDisplay()
+
+    -- Reposition buttons
+    for _, def in ipairs(buttonDefs) do
+        local x = (def.colIndex == 1) and L.COL1_X or L.COL2_X
+        local y = L.TOP + L.HEADER_ZONE + L.BUTTON_SPACING * (def.rowIndex - 0.5)
+        def.bg.x = x
+        def.bg.y = y
+        def.bg.width = L.BUTTON_W
+        def.bg.height = L.BUTTON_H
+        def.txt.x = x
+        def.txt.y = y
+        def.txt.size = L.BUTTON_FONT
+    end
+
+    -- Reposition topic info
+    if topicInfo then
+        topicInfo.x = L.CX
+        topicInfo.y = L.TOP + L.HEADER_ZONE + L.BUTTON_SPACING * 6.5
+        topicInfo.size = math.max(7, L.BUTTON_FONT * 0.85)
+    end
+
+    -- Resize focus ring and reposition
+    focusRing.width = L.BUTTON_W + 6
+    focusRing.height = L.BUTTON_H + 6
+    updateFocusRing()
+end
+
+local function doRelayout()
+    recalcLayout()
+
+    -- Always relayout menu (even if hidden, so it's correct when shown)
+    relayoutMenu()
+
+    -- If test overlay is showing, rebuild it with new layout
+    if testOverlayGroup then
+        testOverlayGroup:removeSelf()
+        createTestOverlay()
+        -- Restore summary text
+        updateSummary()
+        -- Re-parent focus ring
+        if focusMode == "overlay" and focusRing then
+            testOverlayGroup:insert(focusRing)
+            updateFocusRing()
+        end
+    end
+end
+
+-- Solar2D fires "orientation" on Runtime when device rotates.
+-- Delay briefly to let Solar2D finish updating display metrics.
+Runtime:addEventListener("orientation", function()
+    timer.performWithDelay(100, doRelayout)
+end)
+
+-- Also handle window resize (Solar2D simulator on desktop)
+Runtime:addEventListener("resize", function()
+    timer.performWithDelay(100, doRelayout)
+end)
 
 addLog("Tap buttons or use remote/keyboard")
