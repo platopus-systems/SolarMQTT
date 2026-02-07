@@ -425,7 +425,7 @@ Indicator colours: grey (pending), amber (running), green (pass), red (fail/time
 
 11. **`cast from pointer to smaller type 'int' loses information`** — `CoronaLuaRef` is `void*` (8 bytes on arm64) but was being cast to `int` (4 bytes) when boxing into `NSNumber` via `@((int)callbackRef)`. Fixed by using `@((intptr_t)callbackRef)` for boxing and `(CoronaLuaRef)(intptr_t)[refNum integerValue]` for unboxing.
 12. **CI: `'cacert.h' file not found` on iOS/tvOS** — `cacert.h` lives in `shared_openssl/` root but only `shared_openssl/include` was in HEADER_SEARCH_PATHS. Added `$(SRCROOT)/../shared_openssl` to ios and tvos Xcode projects. macOS was unaffected because `cacert.h` is guarded by `#if !TARGET_OS_OSX`.
-13. **CI: tvOS build failure silently swallowed** — `xcodebuild || true` in CI masked compile errors, causing the subsequent "create static library" step to fail with "no object files found". Removed `|| true`.
+13. **CI: tvOS `|| true` is required** — The tvOS Xcode target is a framework, so linking always fails (Corona symbols unavailable at build time). `|| true` lets compilation succeed and produce `.o` files; the next CI step creates a static library from them. When `cacert.h` was missing, compilation also failed, producing no `.o` files — the "create static library" step's error message now clarifies this.
 14. **Simulator build: `no table supportedPlatforms provided`** — `Corona/build.settings` was missing the `supportedPlatforms` table with GitHub release download URLs. Solar2D couldn't resolve the plugin for device builds or `mac-sim` placeholder downloads.
 
 ### Correct mosquitto connect sequence (PluginSolarMQTT.mm)

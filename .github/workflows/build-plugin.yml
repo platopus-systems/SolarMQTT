@@ -168,17 +168,20 @@ jobs:
 
       - name: Build tvOS plugin
         run: |
+          # tvOS target is a framework, so linking always fails (Corona symbols unavailable).
+          # We only need the compiled .o files — the next step creates a static library from them.
+          # || true allows the expected link failure; the .o file check below catches real compile errors.
           xcodebuild -project tvos/Plugin.xcodeproj \
             -target "Corona_plugin_solarmqtt" \
             -configuration Release \
             -sdk appletvos \
-            TVOS_DEPLOYMENT_TARGET=12.0
+            TVOS_DEPLOYMENT_TARGET=12.0 || true
 
       - name: Create tvOS static library from compiled objects
         run: |
           OBJ_DIR="tvos/build/Plugin.build/Release-appletvos/Corona_plugin_solarmqtt.build/Objects-normal/arm64"
           if ! ls "$OBJ_DIR"/*.o >/dev/null 2>&1; then
-            echo "ERROR: No object files found at $OBJ_DIR"
+            echo "ERROR: No object files found at $OBJ_DIR — compilation likely failed (check xcodebuild output above)"
             exit 1
           fi
           mkdir -p tvos/output
